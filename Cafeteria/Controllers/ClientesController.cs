@@ -10,11 +10,11 @@ using Cafeteria.Models;
 
 namespace Cafeteria.Controllers
 {
-    public class UsuariosController : Controller
+    public class ClientesController : Controller
     {
         private readonly CafeteriaContext _context;
 
-        public UsuariosController(CafeteriaContext context)
+        public ClientesController(CafeteriaContext context)
         {
             _context = context;
         }
