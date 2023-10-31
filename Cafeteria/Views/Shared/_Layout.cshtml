@@ -7,10 +7,12 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Cafeteria.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 d-none d-md-block">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Cafeteria</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -35,32 +37,74 @@
                 </div>
             </div>
         </nav>
+
+
+        <div class="container-fluid search-bar d-md-none d-flex">
+            <!--Colocar o botão de pesquisa dentro do input-->
+
+            <div class="input-group justify-content-center">
+                    <input type="text" class="search-input" placeholder="Pesquisar" aria-label="Pesquisar" aria-describedby="button-addon2">
+                    <button class="search-button btn-rounded btn-padding" type="button" id="button-addon2"><i class="fas fa-search"></i></button>
+                </div>
+            
+            <a class="btn btn-outline-light btn-rounded btn-padding">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+        </div>
+        @* <a class="navbar-brand">Navbar</a>
+        <form class="form-inline">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form> *@
+
     </header>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-    <nav class="navbar fixed-bottom navbar-expand-sm navbar-toggleable-sm navbar-light bg-brown border-bottom box-shadow navbar-brown">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Cafeteria</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Produtos" asp-action="Index">Produtos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
-                </ul>
-            </div>
+    <nav class="navbar fixed-bottom navbar-light bg-brown border-bottom box-shadow navbar-brown d-md-none d-block">
+        <div class="container-fluid justify-content-around">
+            <span>
+                <a class="navbar-white" asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i></a>
+            </span>
+            <span>
+                <a class="navbar-white" asp-area="" asp-controller="Favoritos" asp-action="Index"><i class="fas fa-heart"></i></a>
+            </span>
+            <span>
+                
+                <a class="navbar-white" asp-area="" asp-controller="Produtos" asp-action="Index"><i class="fas fa-receipt"></i></a>
+            </span>
+            <span>
+                <a class="navbar-white" asp-area="" asp-controller="Notificacao" asp-action="Index"><i class="fas fa-bell"></i></a>
+            </span>
+            <span>
+                @* <a class="navbar-brand" asp-area="" asp-controller="Carrinho" asp-action="Index"><i class="fas fa-shopping-basket"></i></a> *@
+                <a class="navbar-white" asp-area="" asp-controller="Conta" asp-action="Index"><i class="fas fa-user"></i></a>
+            </span>
+            @* <a class="navbar-brand" asp-area="" asp-controller="Favoritos" asp-action="Index">Pedido</a>
+            <a class="navbar-brand" asp-area="" asp-controller="Carrinho" asp-action="Index">Produto</a>
+            <a class="navbar-brand" asp-area="" asp-controller="Notificacao" asp-action="Index">Notificação</a>
+            <a class="navbar-brand" asp-area="" asp-controller="Conta" asp-action="Index">Conta</a> *@
+
+
+            @* <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button> *@
+            @* <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+            <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Produtos" asp-action="Index">Produtos</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </li>
+            </ul>
+            </div> *@
         </div>
     </nav>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

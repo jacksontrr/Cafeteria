@@ -17,3 +17,47 @@ body {
     margin-bottom: 60px;
     background-color: #B5A79D;
 }
+
+.navbar-white {
+    font-size: 2em;
+    color: #FFF;
+}
+.navbar-brown {
+    background-color: #926345;
+    color: #fff;
+}
+
+.bg-brown {
+    background-color: #926345;
+    color: #fff;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /*background-color: #333;*/
+    padding: 10px;
+}
+
+.search-input {
+    width: 85%;
+    border: none;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.search-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-rounded {
+    border-radius: 15px;
+}
+
+.btn-padding{
+    padding: 10px 15px;
+}
