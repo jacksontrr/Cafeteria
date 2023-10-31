@@ -19,11 +19,11 @@ namespace Cafeteria.Controllers
             _context = context;
         }
 
-        // GET: Usuarios
+        // GET: Clientes
         public async Task<IActionResult> Index()
         {
-              return _context.Usuarios != null ? 
-                          View(await _context.Usuarios.ToListAsync()) :
+              return _context.Clientes != null ? 
+                          View(await _context.Clientes.ToListAsync()) :
                           Problem("Entity set 'CafeteriaContext.Usuarios'  is null.");
         }
 
@@ -31,7 +31,7 @@ namespace Cafeteria.Controllers
         {
             ViewData["Title"] = "Search";
 
-            var usuarios = _context.Usuarios.AsQueryable();
+            var usuarios = _context.Clientes.AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
             {
@@ -43,15 +43,15 @@ namespace Cafeteria.Controllers
             return View("Index", await usuarios.ToListAsync());
         }
 
-        // GET: Usuarios/Details/5
+        // GET: Clientes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Usuarios == null)
+            if (id == null || _context.Clientes == null)
             {
                 return NotFound();
             }
 
-            var usuario = await _context.Usuarios
+            var usuario = await _context.Clientes
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (usuario == null)
             {
@@ -61,13 +61,13 @@ namespace Cafeteria.Controllers
             return View(usuario);
         }
 
-        // GET: Usuarios/Create
+        // GET: Clientes/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Usuarios/Create
+        // POST: Clientes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -83,15 +83,15 @@ namespace Cafeteria.Controllers
             return View(usuario);
         }
 
-        // GET: Usuarios/Edit/5
+        // GET: Clientes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Usuarios == null)
+            if (id == null || _context.Clientes == null)
             {
                 return NotFound();
             }
 
-            var usuario = await _context.Usuarios.FindAsync(id);
+            var usuario = await _context.Clientes.FindAsync(id);
             if (usuario == null)
             {
                 return NotFound();
@@ -99,7 +99,7 @@ namespace Cafeteria.Controllers
             return View(usuario);
         }
 
-        // POST: Usuarios/Edit/5
+        // POST: Clientes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -134,15 +134,15 @@ namespace Cafeteria.Controllers
             return View(usuario);
         }
 
-        // GET: Usuarios/Delete/5
+        // GET: Clientes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Usuarios == null)
+            if (id == null || _context.Clientes == null)
             {
                 return NotFound();
             }
 
-            var usuario = await _context.Usuarios
+            var usuario = await _context.Clientes
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (usuario == null)
             {
@@ -152,19 +152,19 @@ namespace Cafeteria.Controllers
             return View(usuario);
         }
 
-        // POST: Usuarios/Delete/5
+        // POST: Clientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Usuarios == null)
+            if (_context.Clientes == null)
             {
                 return Problem("Entity set 'CafeteriaContext.Usuarios'  is null.");
             }
-            var usuario = await _context.Usuarios.FindAsync(id);
+            var usuario = await _context.Clientes.FindAsync(id);
             if (usuario != null)
             {
-                _context.Usuarios.Remove(usuario);
+                _context.Clientes.Remove(usuario);
             }
             
             await _context.SaveChangesAsync();
@@ -173,7 +173,7 @@ namespace Cafeteria.Controllers
 
         private bool UsuarioExists(int id)
         {
-          return (_context.Usuarios?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Clientes?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
