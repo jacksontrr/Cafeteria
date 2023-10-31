@@ -9,13 +9,13 @@ namespace Cafeteria.Models
         public int Id { get; set; }
         [Required]
         [Display(Name = "Cliente")]
-        public int IdCliente { get; set; }
+        public int ClienteId { get; set; }
         [Required]
         [Display(Name = "Produto")]
-        public int IdProduto { get; set; }
+        public int ProdutoId { get; set; }
         [Required]
         [Display(Name = "Administrador")]
-        public int IdAdministrador { get; set; }
+        public int AdministradorId { get; set; }
         [Required]
         [Range(1, 1000)]
         [Display(Name = "Quantidade")]
@@ -24,11 +24,11 @@ namespace Cafeteria.Models
         public int Quantidade { get; set; }
         public string? Status { get; set; }
         public DateTime? DataPedido { get; set; }
-        [ForeignKey("IdCliente")]
+        [ForeignKey("ClienteId")]
         public Cliente? Cliente { get; set; }
-        [ForeignKey("IdProduto")]
+        [ForeignKey("ProdutoId")]
         public Produto? Produto { get; set; }
-        [ForeignKey("IdAdministrador")]
+        [ForeignKey("AdministradorId")]
         public Administrador? Administrador { get; set; }
     }
 }
