@@ -1,13 +1,16 @@
 ﻿using Cafeteria.Data;
 using Cafeteria.Models;
 using Cafeteria.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Text;
 
 namespace Cafeteria.Services.Implementations
 {
     public class ProdutoRepository : IProdutoRepository
     {
         private readonly CafeteriaContext _context;
-        
+
         public ProdutoRepository(CafeteriaContext context)
         {
             _context = context;
@@ -15,42 +18,114 @@ namespace Cafeteria.Services.Implementations
 
         public void Add(Produto produto)
         {
-            _context.Produtos.Add(produto);
+            try
+            {
+                _context.Produtos.Add(produto);
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new DbUpdateConcurrencyException(e.Message);
+            }
         }
         public void Update(int id, Produto produto)
         {
-            var produtoEncontrado = _context.Produtos.FirstOrDefault(x => x.Id == id);
-            if (produtoEncontrado == null)
+            try
             {
-                return;
+                var produtoEncontrado = _context.Produtos.FirstOrDefault(x => x.Id == id);
+                if (produtoEncontrado == null)
+                {
+                    return;
+                }
+                produtoEncontrado.Nome = produto.Nome;
+                produtoEncontrado.Preco = produto.Preco;
+                produtoEncontrado.Descricao = produto.Descricao;
+                produtoEncontrado.Imagem = produto.Imagem;
+
+                _context.Produtos.Update(produtoEncontrado);
             }
-            produtoEncontrado.Nome = produto.Nome;
-            _context.Produtos.Update(produtoEncontrado);
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new DbUpdateConcurrencyException(e.Message);
+            }
+
         }
         public void Delete(int id)
         {
-            var produto = _context.Produtos.FirstOrDefault(x => x.Id == id);
-            if(produto != null)
+            try
             {
-                _context.Produtos.Remove(produto);
+                var produto = _context.Produtos.FirstOrDefault(x => x.Id == id);
+                if (produto != null)
+                {
+                    _context.Produtos.Remove(produto);
+                }
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new DbUpdateConcurrencyException(e.Message);
             }
         }
         public bool Exists(int id)
         {
-            return _context.Produtos.FirstOrDefault(x => x.Id == id) != null;
+            return _context.Produtos.First(x => x.Id == id) != null;
         }
         public Produto Get(int id)
         {
-            return _context.Produtos.FirstOrDefault(x => x.Id == id);
+            try
+            {
+                return _context.Produtos.First(x => x.Id == id);
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new DbUpdateConcurrencyException(e.Message);
+            }
+
         }
         public IEnumerable<Produto> GetAll()
         {
-            return _context.Produtos;
+            try
+            {
+                return _context.Produtos;
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new DbUpdateConcurrencyException(e.Message);
+            }
+
+        }
+
+        public IEnumerable<Produto> GetNome(string nome)
+        {
+            foreach (var produto in _context.Produtos)
+            {
+                produto.Nome = RemoveDiacritics(produto.Nome);
+                nome = RemoveDiacritics(nome);
+                if (produto.Nome.Contains(nome))
+                {
+                    yield return produto;
+                }
+            }
+            //return _context.Produtos.Where(x => x.Nome.Contains(nome));
         }
 
         public void SaveChanges()
         {
             _context.SaveChanges();
+        }
+
+        public static string RemoveDiacritics(string text)
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder();
+
+            foreach (var c in normalizedString)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+            return stringBuilder.ToString();
         }
     }
 }
