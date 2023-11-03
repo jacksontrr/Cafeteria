@@ -7,37 +7,52 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cafeteria.Data;
 using Cafeteria.Models;
+using Microsoft.AspNetCore.Hosting;
+using Cafeteria.ViewModels;
+using Newtonsoft.Json.Linq;
+using System.Globalization;
+using System.Text;
+using Cafeteria.Services.Interfaces;
 
 namespace Cafeteria.Controllers
 {
     public class ProdutosController : Controller
     {
-        private readonly CafeteriaContext _context;
+        private readonly IProdutoService _produtoService;
 
-        public ProdutosController(CafeteriaContext context)
+        public ProdutosController(IProdutoService produtoService)
         {
-            _context = context;
+            _produtoService = produtoService;
         }
 
         // GET: Produtos
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return _context.Produtos != null ?
-                        View(await _context.Produtos.ToListAsync()) :
+            var produtos = _produtoService.GetAll();
+            return produtos != null ?
+                        View(produtos) :
                         Problem("Entity set 'CafeteriaContext.Produtos'  is null.");
         }
 
-        // GET: Produtos/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Search(string searchString)
         {
-            if (id == null || _context.Produtos == null)
+            if (!string.IsNullOrEmpty(searchString))
             {
-                return NotFound();
+                ViewBag.CurrentFilter = searchString;
+                return View("Index", _produtoService.GetNome(searchString));
             }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+        }
 
-            var produto = await _context.Produtos
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (produto == null)
+        // GET: Produtos/Details/5
+        public IActionResult Details(int? id)
+        {
+            var produto = _produtoService.Get(id.GetValueOrDefault());
+
+            if (id == null || produto == null)
             {
                 return NotFound();
             }
@@ -56,31 +71,58 @@ namespace Cafeteria.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Produto produto)
+        public IActionResult Create(ProdutoViewModel produtoViewModel)
         {
+
             if (ModelState.IsValid)
             {
-                _context.Add(produto);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    bool error = _produtoService.SaveFile(ref produtoViewModel);
+                    if (error)
+                    {
+                        ModelState.AddModelError("Arquivo", "Por favor, envie uma imagem.");
+                        return View("Create", produtoViewModel);
+                    }
+                    Produto produto = new Produto
+                    {
+                        Nome = produtoViewModel.Nome,
+                        Descricao = produtoViewModel.Descricao,
+                        Preco = produtoViewModel.Preco,
+                        Imagem = produtoViewModel.Imagem
+                    };
+                    _produtoService.Add(produto);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("Arquivo", e.Message);
+                    return View("Create", produtoViewModel);
+                }
             }
-            return View(produto);
+            return View(produtoViewModel);
         }
 
         // GET: Produtos/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
-            if (id == null || _context.Produtos == null)
+            var produto = _produtoService.Get(id.GetValueOrDefault());
+
+            if (id == null || produto == null)
             {
                 return NotFound();
             }
 
-            var produto = await _context.Produtos.FindAsync(id);
-            if (produto == null)
+            ProdutoViewModel produtoViewModel = new ProdutoViewModel
             {
-                return NotFound();
-            }
-            return View(produto);
+                Id = produto.Id,
+                Nome = produto.Nome,
+                Descricao = produto.Descricao,
+                Preco = produto.Preco,
+                Imagem = produto.Imagem
+            };
+
+            return View(produtoViewModel);
         }
 
         // POST: Produtos/Edit/5
@@ -88,9 +130,11 @@ namespace Cafeteria.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Produto produto)
+        public IActionResult Edit(int id, ProdutoViewModel produtoViewModel)
         {
-            if (id != produto.Id)
+            Produto produto = _produtoService.Get(id);
+
+            if (id != produtoViewModel.Id || produto == null)
             {
                 return NotFound();
             }
@@ -98,12 +142,30 @@ namespace Cafeteria.Controllers
             {
                 try
                 {
-                    _context.Update(produto);
-                    await _context.SaveChangesAsync();
+                    _produtoService.DeleteFile(produto.Imagem);
+                    bool error = _produtoService.SaveFile(ref produtoViewModel);
+                    if (error)
+                    {
+                        ModelState.AddModelError("Arquivo", "Por favor, envie uma imagem.");
+                        return View("Edit", produtoViewModel);
+                    }
+
+                    _produtoService.Update(id, new Produto
+                    {
+                        Nome = produtoViewModel.Nome,
+                        Descricao = produtoViewModel.Descricao,
+                        Preco = produtoViewModel.Preco,
+                        Imagem = produtoViewModel.Imagem
+                    });
+
+                    if (_produtoService.CheckIfItHasBeenChanged(produto, _produtoService.Get(id)))
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProdutoExists(produto.Id))
+                    if (!_produtoService.Exists(produtoViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -112,22 +174,16 @@ namespace Cafeteria.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(produto);
+            return View(produtoViewModel);
         }
 
         // GET: Produtos/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
-            if (id == null || _context.Produtos == null)
-            {
-                return NotFound();
-            }
+            var produto = _produtoService.Get(id.GetValueOrDefault());
 
-            var produto = await _context.Produtos
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (produto == null)
+            if (id == null || produto == null)
             {
                 return NotFound();
             }
@@ -138,25 +194,29 @@ namespace Cafeteria.Controllers
         // POST: Produtos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            if (_context.Produtos == null)
+            try
             {
-                return Problem("Entity set 'CafeteriaContext.Produtos'  is null.");
+                var produto = _produtoService.Get(id);
+
+                if (produto != null)
+                {
+                    _produtoService.Delete(id);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            var produto = await _context.Produtos.FindAsync(id);
-            if (produto != null)
+            catch (Exception e)
             {
-                _context.Produtos.Remove(produto);
+                return Problem(e.Message);
             }
 
-            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProdutoExists(int id)
-        {
-            return (_context.Produtos?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
     }
 }
