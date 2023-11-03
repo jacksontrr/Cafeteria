@@ -7,21 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\Implementations\**" />
-    <Compile Remove="Data\Repositories\**" />
-    <Compile Remove="Services\**" />
-    <Content Remove="Data\Implementations\**" />
-    <Content Remove="Data\Repositories\**" />
-    <Content Remove="Services\**" />
-    <EmbeddedResource Remove="Data\Implementations\**" />
-    <EmbeddedResource Remove="Data\Repositories\**" />
-    <EmbeddedResource Remove="Services\**" />
-    <None Remove="Data\Implementations\**" />
-    <None Remove="Data\Repositories\**" />
-    <None Remove="Services\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework" Version="2.2.4" />
@@ -46,13 +31,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
     <Folder Include="Filters\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\Shared\" />
-    <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\images\product\" />
     <Folder Include="wwwroot\js\" />
     <Folder Include="wwwroot\lib\bootstrap\" />
     <Folder Include="wwwroot\lib\bootstrap\dist\css\" />
@@ -62,6 +45,7 @@
     <Folder Include="wwwroot\lib\jquery-validation\dist\" />
     <Folder Include="wwwroot\lib\jquery\" />
     <Folder Include="wwwroot\lib\jquery\dist\" />
+    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
   <ItemGroup>
