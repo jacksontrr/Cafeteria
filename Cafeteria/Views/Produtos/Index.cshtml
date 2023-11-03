@@ -1,15 +1,54 @@
 ﻿@model IEnumerable<Cafeteria.Models.Produto>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Produtos";
 }
-
-<h1>Index</h1>
-
+<link rel="stylesheet" href="~/css/Produtos.css" asp-append-version="true" />
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<form asp-controller="Produtos" asp-action="Search" method="get">
+    <div class="search mb-3 d-none d-md-block">
+        <div class="input-group">
+            <input type="text" class="search-input form-control" name="searchString" placeholder="Pesquisar" aria-label="Pesquisar" aria-describedby="button-addon2" value="@(ViewBag.CurrentFilter ?? "")">
+            <div class="search-finishing">
+                <button class="search-button btn btn-padding btn-rounded" type="submit" id="search-send"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="container">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-3 col-6">
+                <div class="card card-rounder mb-4 shadow bg-brown card-rounder">
+                    <div class="card-favorite">
+                        <a class="card-btn-favorite" href="#">
+                            <i class="fas fa-heart"></i>
+                        </a>
+                    </div>
+                    <div class="card-img mt-3">
+                        <img src="~/images/product/@Html.DisplayFor(modelItem => item.Imagem)" class="card-img-top card-img-product" alt="@Html.DisplayFor(modelItem => item.Nome)">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@Html.DisplayFor(modelItem => item.Nome)</h5>
+                        <p class="card-text">@Html.DisplayFor(modelItem => item.Preco)</p>
+                        <p class="card-text">@Html.DisplayFor(modelItem => item.Descricao)</p>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+
+
+@* <h1>Index</h1> *@
+
+
+@*<table class="table">
     <thead>
         <tr>
             <th>
@@ -28,26 +67,29 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Preco)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Imagem)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descricao)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Preco)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Imagem)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
-</table>
+</table> *@
+
+<script src="~/js/Produtos.js" asp-append-version="true"></script>

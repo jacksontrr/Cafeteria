@@ -1,3 +1,10 @@
 ﻿$(document).ready(function () {
-    console.log($("form"))
+
+    // search 
+    $("#search-send").on("click", function () {
+        let search = $("#search").val();
+        if (search != "") {
+            window.location.href = "/Produtos/Search/" + search;
+        }
+    }
 });

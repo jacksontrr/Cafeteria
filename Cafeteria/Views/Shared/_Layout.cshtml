@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,26 +12,38 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 d-none d-md-block">
+        <nav class="navbar navbar-expand-sm  border-bottom box-shadow mb-3 navbar-brown d-none d-md-block">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Cafeteria</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Index">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Cadastrar">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Produtos" asp-action="Index">Produtos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+                @* <div class="flex-grow-1 d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Index">Login</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Cadastrar">Login</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link text-white" asp-area="" asp-controller="Produtos" asp-action="Index">Produtos</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                </li>
+                </ul>
+                </div> *@
+                <div class="d-flex">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown">
+                            <a class="btn btn-outline-light btn-rounded btn-padding btn-brown" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">Perfil</a>
+                                <a class="dropdown-item" href="#">Configurações</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Sair</a>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -39,18 +51,21 @@
         </nav>
 
 
-        <div class="container-fluid search-bar d-md-none d-flex">
-            <!--Colocar o botão de pesquisa dentro do input-->
-
-            <div class="input-group justify-content-center">
-                    <input type="text" class="search-input" placeholder="Pesquisar" aria-label="Pesquisar" aria-describedby="button-addon2">
-                    <button class="search-button btn-rounded btn-padding" type="button" id="button-addon2"><i class="fas fa-search"></i></button>
+        <form asp-controller="Produtos" asp-action="Search" method="get">
+            <div class="container-fluid search-bar d-md-none d-flex">
+                <div class="search shadow-white mx-4">
+                    <div class="input-group">
+                        <input type="text" class="search-input form-control" placeholder="Pesquisar" aria-label="Pesquisar" name="searchString" aria-describedby="button-addon2" value="@(ViewBag.CurrentFilter ?? "")">
+                        <div class="search-finishing">
+                            <button class="search-button btn btn-padding btn-rounded" type="submit" id="search-send-navbar"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
                 </div>
-            
-            <a class="btn btn-outline-light btn-rounded btn-padding">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
-        </div>
+                <a class="btn btn-outline-light btn-rounded btn-padding shadow-white">
+                    <i class="fas fa-shopping-cart"></i>
+                </a>
+            </div>
+        </form>
         @* <a class="navbar-brand">Navbar</a>
         <form class="form-inline">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -65,23 +80,19 @@
     </div>
     <nav class="navbar fixed-bottom navbar-light bg-brown border-bottom box-shadow navbar-brown d-md-none d-block">
         <div class="container-fluid justify-content-around">
-            <span>
-                <a class="navbar-white" asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i></a>
-            </span>
-            <span>
-                <a class="navbar-white" asp-area="" asp-controller="Favoritos" asp-action="Index"><i class="fas fa-heart"></i></a>
-            </span>
-            <span>
-                
-                <a class="navbar-white" asp-area="" asp-controller="Produtos" asp-action="Index"><i class="fas fa-receipt"></i></a>
-            </span>
-            <span>
-                <a class="navbar-white" asp-area="" asp-controller="Notificacao" asp-action="Index"><i class="fas fa-bell"></i></a>
-            </span>
-            <span>
-                @* <a class="navbar-brand" asp-area="" asp-controller="Carrinho" asp-action="Index"><i class="fas fa-shopping-basket"></i></a> *@
-                <a class="navbar-white" asp-area="" asp-controller="Conta" asp-action="Index"><i class="fas fa-user"></i></a>
-            </span>
+
+            <a class="navbar-white" asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i></a>
+
+
+            <a class="navbar-white" asp-area="" asp-controller="Favoritos" asp-action="Index"><i class="fas fa-heart"></i></a>
+
+            <a class="navbar-white" asp-area="" asp-controller="Produtos" asp-action="Index"><i class="fas fa-receipt"></i></a>
+
+            <a class="navbar-white" asp-area="" asp-controller="Notificacao" asp-action="Index"><i class="fas fa-bell"></i></a>
+
+            @* <a class="navbar-brand" asp-area="" asp-controller="Carrinho" asp-action="Index"><i class="fas fa-shopping-basket"></i></a> *@
+            <a class="navbar-white" asp-area="" asp-controller="Conta" asp-action="Index"><i class="fas fa-user"></i></a>
+
             @* <a class="navbar-brand" asp-area="" asp-controller="Favoritos" asp-action="Index">Pedido</a>
             <a class="navbar-brand" asp-area="" asp-controller="Carrinho" asp-action="Index">Produto</a>
             <a class="navbar-brand" asp-area="" asp-controller="Notificacao" asp-action="Index">Notificação</a>
