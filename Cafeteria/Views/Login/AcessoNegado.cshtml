@@ -1,0 +1,29 @@
+﻿@using System.Security.Claims;
+@{
+    ViewData["Title"] = "Acesso Negado";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card background-color-transparent">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <h1 class="display-4 text-center">Acesso Negado</h1>
+                    <p class="lead text-center">Olá @User.FindFirst(ClaimTypes.Name)?.Value, você não tem permissão para acessar esta página.</p>
+                    <div class="text-center py-2">
+                        <a asp-area="" asp-controller="/" asp-action="Index" class="btn btn-brown">Voltar à Página Inicial</a>
+                    </div>
+                }
+                else
+                {
+                    <h1 class="display-4 text-center">Acesso Negado</h1>
+                    <p class="lead text-center">Olá, você precisa estar logado para fazer a ação.</p>
+                    <div class="text-center py-2">
+                        <a asp-area="" asp-controller="Login" asp-action="Index" class="btn btn-brown">Ir para tela de Login</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
