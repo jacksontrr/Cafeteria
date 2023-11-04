@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims;
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="utf-8" />
@@ -14,7 +15,7 @@
     <header>
         <nav class="navbar navbar-expand-sm  border-bottom box-shadow mb-3 navbar-brown d-none d-md-block">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Cafeteria</a>
+                <a class="navbar-brand" asp-area="" asp-controller="/" asp-action="">Cafeteria</a>
 
                 @* <div class="flex-grow-1 d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
@@ -34,17 +35,34 @@
                 </div> *@
                 <div class="d-flex">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item dropdown">
-                            <a class="btn btn-outline-light btn-rounded btn-padding btn-brown" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">Perfil</a>
-                                <a class="dropdown-item" href="#">Configurações</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Sair</a>
-                            </div>
-                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <div class="me-2 d-flex align-items-center h-100">
+                                    <strong>
+                                        @User.FindFirst(ClaimTypes.Name)?.Value
+                                    </strong>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="btn btn-outline-light btn-rounded btn-padding btn-brown" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-user"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="#">Perfil</a>
+                                    <a class="dropdown-item" href="#">Configurações</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a asp-action="Logout" asp-controller="Login" class="dropdown-item">Sair</a>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-light btn-rounded btn-padding btn-brown" asp-area="" asp-controller="Login" asp-action="Index">Entrar</a>
+                            </li>
+                        }
+
                     </ul>
                 </div>
             </div>
@@ -81,17 +99,34 @@
     <nav class="navbar fixed-bottom navbar-light bg-brown border-bottom box-shadow navbar-brown d-md-none d-block">
         <div class="container-fluid justify-content-around">
 
-            <a class="navbar-white" asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i></a>
+            <a class="navbar-white" asp-area="" asp-controller="/" asp-action="Index"><i class="fas fa-home"></i></a>
 
 
             <a class="navbar-white" asp-area="" asp-controller="Favoritos" asp-action="Index"><i class="fas fa-heart"></i></a>
 
-            <a class="navbar-white" asp-area="" asp-controller="Produtos" asp-action="Index"><i class="fas fa-receipt"></i></a>
+            <a class="navbar-white" asp-area="" asp-controller="Carrinhos" asp-action="Index"><i class="fas fa-receipt"></i></a>
 
-            <a class="navbar-white" asp-area="" asp-controller="Notificacao" asp-action="Index"><i class="fas fa-bell"></i></a>
+            <a class="navbar-white" asp-area="" asp-controller="Notificacoes" asp-action="Index"><i class="fas fa-bell"></i></a>
 
             @* <a class="navbar-brand" asp-area="" asp-controller="Carrinho" asp-action="Index"><i class="fas fa-shopping-basket"></i></a> *@
-            <a class="navbar-white" asp-area="" asp-controller="Conta" asp-action="Index"><i class="fas fa-user"></i></a>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="dropdown">
+                    <a class="navbar-white " href="#" id="navbarDownDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-top dropdown" aria-labelledby="navbarDownDropdown">
+                        <a class="dropdown-item" href="#">Perfil</a>
+                        <a class="dropdown-item" href="#">Configurações</a>
+                        <div class="dropdown-divider"></div>
+                        <a asp-action="Logout" asp-controller="Login" class="dropdown-item">Sair</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <a class="navbar-white" asp-area="" asp-controller="Login" asp-action="Index"><i class="fas fa-user"></i></a>
+            }
 
             @* <a class="navbar-brand" asp-area="" asp-controller="Favoritos" asp-action="Index">Pedido</a>
             <a class="navbar-brand" asp-area="" asp-controller="Carrinho" asp-action="Index">Produto</a>
