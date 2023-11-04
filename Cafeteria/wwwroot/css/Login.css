@@ -1,0 +1,34 @@
+.center-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.logo-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    height: 140px;
+}
+
+.btn-brown {
+    background-color: #926345;
+    color: #FFF;
+    border-color: #E9E8F8;
+}
+
+    .btn-brown:hover, .btn-brown:focus, .btn-brown:active {
+        background-color: #E9E8E8;
+        color: #926345;
+        border-color: #E9E8F8;
+        box-shadow: none;
+    }
+
+.register {
+    font-size: 9pt;
+}
