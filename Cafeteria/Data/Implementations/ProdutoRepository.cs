@@ -66,7 +66,7 @@ namespace Cafeteria.Services.Implementations
         }
         public bool Exists(int id)
         {
-            return _context.Produtos.First(x => x.Id == id) != null;
+            return _context.Produtos.Any(x => x.Id == id);
         }
         public Produto Get(int id)
         {
@@ -107,9 +107,10 @@ namespace Cafeteria.Services.Implementations
         {
             foreach (var produto in _context.Produtos)
             {
-                produto.Nome = RemoveDiacritics(produto.Nome);
+                string nomeBD = produto.Nome;
+                nomeBD = RemoveDiacritics(nomeBD);
                 nome = RemoveDiacritics(nome);
-                if (produto.Nome.Contains(nome))
+                if (nomeBD.ToUpper().Contains(nome.ToUpper()))
                 {
                     yield return produto;
                 }
