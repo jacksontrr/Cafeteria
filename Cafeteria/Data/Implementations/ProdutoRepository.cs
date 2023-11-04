@@ -84,7 +84,17 @@ namespace Cafeteria.Services.Implementations
         {
             try
             {
-                return _context.Produtos;
+                List<Produto> list = new List<Produto>();
+                foreach(var produto in _context.Produtos)
+                {
+                    if(String.IsNullOrEmpty(produto.Imagem))
+                    {
+                        // pegar imagem padrão sem-imagem.png
+                        produto.Imagem = "sem-imagem.png";
+                    }
+                    list.Add(produto);
+                }
+                return list;
             }
             catch (DbUpdateConcurrencyException e)
             {
