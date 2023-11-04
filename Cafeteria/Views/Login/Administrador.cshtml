@@ -8,7 +8,7 @@
             <div class="logo-div">
                 <img src="~/images/logo.png" class="logo" />
             </div>
-            <form asp-controller="Login" asp-action="Index" method="post">
+            <form asp-controller="Login" asp-action="Administrador" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Email"></label>
@@ -26,13 +26,6 @@
                 </div>
 
             </form>
-            <div class="row">
-                <div class="d-flex justify-content-center mt-2">
-                    <span class="register">
-                        Ainda não cadastrou? Clique&nbsp;<a asp-action="Cadastrar" asp-controller="Login">aqui</a>
-                    </span>
-                </div>
-            </div>
 
         </div>
     </div>

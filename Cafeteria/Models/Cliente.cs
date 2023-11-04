@@ -2,7 +2,7 @@
 
 namespace Cafeteria.Models
 {
-    public class Cliente 
+    public class Cliente
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "O campo Nome é obrigatório.")]
@@ -11,6 +11,8 @@ namespace Cafeteria.Models
         public string Email { get; set; }
         [Required(ErrorMessage = "O campo Email é obrigatório.")]
         public string Senha { get; set; }
+
+        public ICollection<Pedido>? Pedidos { get; set; }
 
         public void CriptografarSenha()
         {

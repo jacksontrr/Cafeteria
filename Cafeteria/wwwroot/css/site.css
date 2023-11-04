@@ -18,12 +18,12 @@ body {
     background-color: #B5A79D;
 }
 
-.navbar-white {
+.navbar-white, .navbar-white:hover, .navbar-white:focus {
     font-size: 2em;
     color: #FFF;
 }
 
-    .navbar-white:hover, .navbar-white:focus {
+    .navbar-white:active {
         color: #B5A79D;
     }
 
@@ -138,3 +138,17 @@ body {
         border-color: #E9E8F8;
         box-shadow: none;
     }
+
+.dropdown-menu.dropdown-menu-top {
+    position: absolute;
+    inset: auto auto 0px 0px;
+    margin: 0px;
+    transform: translate(0px, -40px);
+    right: 8px;
+    left: auto;
+    bottom: 10px;
+}
+
+.background-color-transparent{
+    background-color: transparent !important;
+}
