@@ -49,8 +49,11 @@
                                     <i class="fas fa-user"></i>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="#">Perfil</a>
-                                    <a class="dropdown-item" href="#">Configurações</a>
+                                    @if (User.IsInRole("Cliente"))
+                                    {
+                                        <a asp-action="Favoritos" asp-controller="Clientes" class="dropdown-item">Favoritos</a>
+                                    }
+                                    <a asp-action="Configuracao" asp-controller="Login" class="dropdown-item" >Configurações</a>
                                     <div class="dropdown-divider"></div>
                                     <a asp-action="Logout" asp-controller="Login" class="dropdown-item">Sair</a>
                                 </div>
@@ -73,7 +76,7 @@
             <div class="container-fluid search-bar d-md-none d-flex">
                 <div class="search shadow-white mx-4">
                     <div class="input-group">
-                        <input type="text" class="search-input form-control" placeholder="Pesquisar" aria-label="Pesquisar" name="searchString" aria-describedby="button-addon2" value="@(ViewBag.CurrentFilter ?? "")">
+                        <input type="text" class="search-input form-control" placeholder="Pesquisar" aria-label="Pesquisar" name="search" aria-describedby="button-addon2" value="@(ViewBag.CurrentFilter ?? "")">
                         <div class="search-finishing">
                             <button class="search-button btn btn-padding btn-rounded" type="submit" id="search-send-navbar"><i class="fas fa-search"></i></button>
                         </div>
@@ -117,7 +120,11 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-top dropdown" aria-labelledby="navbarDownDropdown">
                         <a class="dropdown-item" href="#">Perfil</a>
-                        <a class="dropdown-item" href="#">Configurações</a>
+                        @if (User.IsInRole("Cliente"))
+                        {
+                            <a asp-action="Favoritos" asp-controller="Clientes" class="dropdown-item">Favoritos</a>
+                        }
+                        <a asp-action="Configuracao" asp-controller="Login" class="dropdown-item">Configurações</a>
                         <div class="dropdown-divider"></div>
                         <a asp-action="Logout" asp-controller="Login" class="dropdown-item">Sair</a>
                     </div>
