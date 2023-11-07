@@ -2,15 +2,18 @@
 
 @{
     ViewData["Title"] = "Produtos";
+    int clienteId = 0;
+    if (User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
+    {
+        clienteId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+    }
 }
 <link rel="stylesheet" href="~/css/Produtos.css" asp-append-version="true" />
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+
 <form asp-controller="Produtos" asp-action="Search" method="get">
     <div class="search mb-3 d-none d-md-block">
         <div class="input-group">
-            <input type="text" class="search-input form-control" name="searchString" placeholder="Pesquisar" aria-label="Pesquisar" aria-describedby="button-addon2" value="@(ViewBag.CurrentFilter ?? "")">
+            <input type="text" class="search-input form-control" name="search" placeholder="Pesquisar" aria-label="Pesquisar" aria-describedby="button-addon2" value="@(ViewBag.CurrentFilter ?? "")">
             <div class="search-finishing">
                 <button class="search-button btn btn-padding btn-rounded" type="submit" id="search-send"><i class="fas fa-search"></i></button>
             </div>
@@ -22,13 +25,22 @@
     <div class="row">
         @foreach (var item in Model)
         {
+            bool isFavorite = false;
+            if (User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
+            {
+                isFavorite = item.Favoritos.Any(f => f.ClienteId == clienteId);
+            }
             <div class="col-md-3 col-6">
                 <div class="card card-rounder mb-4 shadow bg-brown card-rounder">
-                    <div class="card-favorite">
-                        <a class="card-btn-favorite" href="#">
-                            <i class="fas fa-heart"></i>
-                        </a>
-                    </div>
+                    @if (User.IsInRole("Cliente") || !User.Identity.IsAuthenticated)
+                    {
+                        <div class="card-favorite">
+                            <a class="card-btn-favorite" asp-action="Favoritar" asp-route-id="@item.Id">
+                                <i class="fas fa-heart @(isFavorite ? "text-danger" : "")"></i>
+                            </a>
+                        </div>
+                        
+                    }
                     <div class="card-img mt-3">
                         <img src="~/images/product/@Html.DisplayFor(modelItem => item.Imagem)" class="card-img-top card-img-product" alt="@Html.DisplayFor(modelItem => item.Nome)">
                     </div>
