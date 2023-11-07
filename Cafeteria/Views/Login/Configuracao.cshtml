@@ -1,0 +1,34 @@
+﻿@model Cafeteria.ViewModels.UsuarioSalvaViewModel;
+@{
+    ViewData["Title"] = "Configuração de Cliente";
+}
+
+<form asp-controller="Login" asp-action="Alterar" method="post" class="col-md-6 col-12 offset-md-3 offset-0">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" name="emailOld" id="emailOld" value="@Model.Email" />
+    <div class="form-group">
+        <label asp-for="Nome" class="control-label"></label>
+        <input asp-for="Nome" class="form-control" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Senha"></label>
+        <input asp-for="Senha" type="password" class="form-control" />
+        <span asp-validation-for="Senha" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="ConfirmacaoSenha" class="control-label">Confirmar Senha</label>
+        <input asp-for="ConfirmacaoSenha" class="form-control" type="password" />
+        <span asp-validation-for="ConfirmacaoSenha" class="text-danger"></span>
+    </div>
+    <div class="d-flex mt-2 justify-content-between">
+        <a asp-action="Index" asp-controller="Login" class="btn btn-light mt-2">Voltar</a>
+        <button type="submit" class="btn btn-brown mt-2">Salvar</button>
+    </div>
+</form>
