@@ -21,13 +21,22 @@ builder.Services.AddMvc();
 builder.Services.AddDbContext<CafeteriaContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("CafeteriaContext")));
 builder.Services.AddSingleton<IFileProvider>(
     new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
-builder.Services.AddScoped<IProdutoService, ProdutoService>();
+#region Services
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IAdministradorRepository, AdministradorRepository>();
-builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IFavoritoRepository, FavoritoRepository>();
+#endregion
 
-builder.Services.AddHsts(options => {
+#region Services
+builder.Services.AddScoped<IAdministradorService, AdministradorService>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
+#endregion
+
+builder.Services.AddHsts(options =>
+{
     options.MaxAge = TimeSpan.FromDays(30);
     options.IncludeSubDomains = true;
     options.Preload = true;
@@ -78,7 +87,7 @@ app.UseEndpoints(endpoints =>
         name: "default",
         pattern: "{controller=Produtos}/{action=Index}/{id?}"
     );
-    
+
 });
 
 
