@@ -1,0 +1,38 @@
+﻿.card-rounder {
+    border-radius: 15px;
+}
+
+.card-img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 200px;
+    object-fit: scale-down;
+    padding: 10px;
+}
+
+.card-img-product {
+    width: 100%;
+    object-fit: scale-down;
+    height: 100%;
+}
+
+.card-favorite {
+    position: absolute;
+    top: 3px;
+    right: 8px;
+    left: auto;
+}
+
+.card-btn-favorite {
+    color: #fff;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    font-size: 1.5rem;
+}
+
+    .card-btn-favorite:hover, .card-btn-favorite:active, .card-btn-favorite:focus {
+        color: #B5A79D;
+    }
