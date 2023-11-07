@@ -4,15 +4,19 @@ namespace Cafeteria.Data.Repositories
 {
     public interface IClienteRepository
     {
-        IEnumerable<Cliente>? GetAll();
-        IEnumerable<Cliente>? GetNome(string nome);
-        Cliente? Get(int id);
-        Cliente? GetEmailSenha(string email, string senha);
-        Cliente? GetEmail(string email);
-        void Add(Cliente cliente);
-        void Update(int id, Cliente cliente);
-        void Delete(int id);
+        #region CRUD
+        Task<IEnumerable<Cliente>> GetAll();
+        Task Add(Cliente cliente);
+        Task Update(int id, Cliente cliente);
+        Task Delete(int id);
+        #endregion
+        #region Login
+        Task<Cliente> GetEmailSenha(string email, string senha);
+        #endregion
+        Task<IEnumerable<Cliente>> GetNome(string nome);
+        Task<Cliente> Get(int id);
+        Task<Cliente> GetEmail(string email);
         bool Exists(int id);
-        void SaveChanges();
+        Task<Cliente> GetIdEmail(int id, string email);
     }
 }

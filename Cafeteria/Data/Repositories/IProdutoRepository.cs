@@ -5,13 +5,14 @@ namespace Cafeteria.Services.Interfaces
 {
     public interface IProdutoRepository 
     {
-        IEnumerable<Produto> GetAll();
-        IEnumerable<Produto> GetNome(string nome);
-        Produto Get(int id);
-        void Add(Produto produto);
-        void Update(int id, Produto produto);
-        void Delete(int id);
+        #region CRUD
+        Task Add(Produto produto);
+        Task Update(int id, Produto produto);
+        Task Delete(int id);
+        Task<IEnumerable<Produto>> GetAll(int? id);
+        #endregion
+        Task<IEnumerable<Produto>> GetNome(string nome);
+        Task<Produto> Get(int id);
         bool Exists(int id);
-        void SaveChanges();
     }
 }

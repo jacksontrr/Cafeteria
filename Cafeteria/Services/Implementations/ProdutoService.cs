@@ -1,4 +1,5 @@
 ﻿using Cafeteria.Data;
+using Cafeteria.Data.Repositories;
 using Cafeteria.Models;
 using Cafeteria.Services.Interfaces;
 using Cafeteria.ViewModels;
@@ -10,49 +11,53 @@ namespace Cafeteria.Services.Implementations
     {
         private readonly IProdutoRepository _produtoRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFavoritoRepository _favoritoRepository;
 
-        public ProdutoService(IProdutoRepository produtoRepository, IWebHostEnvironment webHostEnvironment)
+        public ProdutoService(IProdutoRepository produtoRepository, IWebHostEnvironment webHostEnvironment, IFavoritoRepository favoritoRepository)
         {
             _produtoRepository = produtoRepository;
             _webHostEnvironment = webHostEnvironment;
+            _favoritoRepository = favoritoRepository;
         }
 
-        public void Add(Produto produto)
+        #region CRUD
+        public async Task Add(Produto produto)
         {
-            _produtoRepository.Add(produto);
-            _produtoRepository.SaveChanges();
+            await _produtoRepository.Add(produto);
         }
 
-        public void Delete(int id)
+        public async Task Update(int id, Produto produto)
         {
-            _produtoRepository.Delete(id);
-            _produtoRepository.SaveChanges();
+            await _produtoRepository.Update(id, produto);
         }
+
+        public async Task Delete(int id)
+        {
+            await _produtoRepository.Delete(id);
+        }
+
+        public async Task<IEnumerable<Produto>> GetAll(int? clienteId)
+        {
+            return await _produtoRepository.GetAll(clienteId);
+        }
+
+        #endregion
 
         public bool Exists(int id)
         {
             return _produtoRepository.Exists(id);
         }
 
-        public Produto Get(int id)
+        public async Task<Produto> Get(int id)
         {
-            return _produtoRepository.Get(id);
+            return await _produtoRepository.Get(id);
         }
 
-        public IEnumerable<Produto> GetAll()
+        public async Task<IEnumerable<Produto>> GetNome(string nome)
         {
-            return _produtoRepository.GetAll();
-        }
-        public IEnumerable<Produto> GetNome(string nome)
-        {
-            return _produtoRepository.GetNome(nome);
+            return await _produtoRepository.GetNome(nome);
         }
 
-        public void Update(int id, Produto produto)
-        {
-            _produtoRepository.Update(id, produto);
-            _produtoRepository.SaveChanges();
-        }
         public bool SaveFile(ref ProdutoViewModel produtoViewModel)
         {
             bool error = false;
@@ -117,6 +122,21 @@ namespace Cafeteria.Services.Implementations
                 verificar = true;
             }
             return verificar;
+        }
+
+        public async Task SaveFavorite(Favorito favorito)
+        {
+            await _favoritoRepository.Add(favorito);
+        }
+
+        public async Task<Favorito> GetFavorito(Favorito favorito)
+        {
+            return await _favoritoRepository.GetClienteProduto(favorito);
+        }
+
+        public async Task DeleteFavorite(int id)
+        {
+            await _favoritoRepository.Delete(id);
         }
     }
 }

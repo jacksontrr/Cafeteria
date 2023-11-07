@@ -1,7 +1,8 @@
 ﻿using Cafeteria.Data.Repositories;
 using Cafeteria.Models;
+using Cafeteria.Utilities;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Configuration;
+
 
 namespace Cafeteria.Data.Implementations
 {
@@ -14,150 +15,92 @@ namespace Cafeteria.Data.Implementations
             _context = context;
         }
 
-        public IEnumerable<Cliente>? GetAll()
+        #region CRUD
+        public async Task Add(Cliente cliente)
         {
-            try
+            _context.Clientes.Add(cliente);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Update(int id, Cliente cliente)
+        {
+            var clienteToUpdate = _context.Clientes.FirstOrDefault(c => c.Id == id);
+            if (clienteToUpdate != null)
             {
-                var clientes = _context.Clientes;
-                if (clientes != null)
-                {
-                    return clientes;
-                }
-                return null;
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
+                clienteToUpdate.Nome = cliente.Nome;
+                clienteToUpdate.Email = cliente.Email;
+                clienteToUpdate.Senha = PasswordUtilities.PasswordHash(cliente.Senha);
+                _context.Clientes.Update(clienteToUpdate);
+                await _context.SaveChangesAsync();
             }
         }
 
-        public IEnumerable<Cliente>? GetNome(string nome)
+        public async Task Delete(int id)
         {
-            try
+            var clienteToDelete = _context.Clientes.FirstOrDefault(x => x.Id == id);
+            if (clienteToDelete != null)
             {
-                var clientes = _context.Clientes.Where(c => c.Nome.Contains(nome));
-                if (clientes != null)
-                {
-                    return clientes;
-                }
-                return null;
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
+                _context.Clientes.Remove(clienteToDelete);
+                await _context.SaveChangesAsync();
             }
         }
 
-        public Cliente? Get(int id)
+        public async Task<IEnumerable<Cliente>> GetAll()
         {
-            try
-            {
-                var cliente = _context.Clientes.FirstOrDefault(c => c.Id == id);
-                if (cliente != null)
-                {
-                    return cliente;
-                }
-                return null;
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
+            return await _context.Clientes.ToListAsync();
         }
 
-        public Cliente? GetEmail(string email)
+        #endregion
+
+        #region Login
+        
+        public async Task<Cliente> GetEmailSenha(string email, string senha)
         {
-            try
+            var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.Email == email);
+            if (cliente != null)
             {
-                var cliente = _context.Clientes.FirstOrDefault(c => c.Email == email);
-                if (cliente != null)
+                if (PasswordUtilities.PasswordVerify(senha, cliente.Senha))
                 {
                     return cliente;
                 }
-                return null;
             }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
+            return null;
         }
 
-        public Cliente? GetEmailSenha(string email, string senha)
+        #endregion
+
+        public async Task<IEnumerable<Cliente>> GetNome(string nome)
         {
-            try
+            List<Cliente> list = new List<Cliente>();
+            foreach (var administrador in await _context.Clientes.ToListAsync())
             {
-                var cliente = _context.Clientes.FirstOrDefault(c => c.Email == email);
-                if (cliente != null)
+                string nomeDB = CharacterTreatment.RemoveDiacritics(administrador.Nome).ToLower();
+                nome = CharacterTreatment.RemoveDiacritics(nome).ToLower();
+                if (nomeDB.Contains(nome))
                 {
-                    if (BCrypt.Net.BCrypt.Verify(senha, cliente.Senha))
-                    {
-                        return cliente;
-                    }
-                }
-                return null;
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
-        }
-
-        public void Add(Cliente cliente)
-        {
-            try
-            {
-                _context.Clientes.Add(cliente);
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
-        }
-
-        public void Update(int id, Cliente cliente)
-        {
-            try
-            {
-                var clienteToUpdate = _context.Clientes.FirstOrDefault(c => c.Id == id);
-                if (clienteToUpdate != null)
-                {
-                    clienteToUpdate.Nome = cliente.Nome;
-                    clienteToUpdate.Email = cliente.Email;
-                    clienteToUpdate.Senha = cliente.Senha;
-                    clienteToUpdate.CriptografarSenha();
-                    _context.Clientes.Update(clienteToUpdate);
+                    list.Add(administrador);
                 }
             }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
+            return list;
         }
 
-        public void Delete(int id)
+        public async Task<Cliente> Get(int id)
         {
-            try
-            {
-                var clienteToDelete = _context.Clientes.FirstOrDefault(x => x.Id == id);
-                if (clienteToDelete != null)
-                {
-                    _context.Clientes.Remove(clienteToDelete);
-                }
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
+            return await _context.Clientes.FirstOrDefaultAsync(x => x.Id == id);
+        }
+        public async Task<Cliente> GetIdEmail(int id, string email)
+        {
+            return await _context.Clientes.FirstOrDefaultAsync(c => c.Id == id && c.Email == email);
+        }
+
+        public async Task<Cliente> GetEmail(string email)
+        {
+            return await _context.Clientes.FirstOrDefaultAsync(c => c.Email == email);
         }
 
         public bool Exists(int id)
         {
             return _context.Clientes.Any(c => c.Id == id);
-        }
-
-        public void SaveChanges()
-        {
-            _context.SaveChanges();
         }
     }
 }

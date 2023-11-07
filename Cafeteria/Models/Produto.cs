@@ -18,5 +18,7 @@ namespace Cafeteria.Models
         [StringLength(255)]
         public string? Imagem { get; set; }
 
+        public ICollection<Favorito>? Favoritos { get; set; }
+
     }
 }

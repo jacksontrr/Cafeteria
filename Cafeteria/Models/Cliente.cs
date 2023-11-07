@@ -14,9 +14,5 @@ namespace Cafeteria.Models
 
         public ICollection<Pedido>? Pedidos { get; set; }
 
-        public void CriptografarSenha()
-        {
-            Senha = BCrypt.Net.BCrypt.HashPassword(Senha);
-        }
     }
 }
