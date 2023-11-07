@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Favorito>
+@{
+    ViewData["Title"] = "Favoritos";
+}
+
+<link rel="stylesheet" href="~/css/Favorito.css" asp-append-version="true" />
+
+<h1>Favoritos</h1>
+@if (Model.Count() > 0)
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-3 col-6">
+                    <div class="card card-rounder mb-4 shadow bg-brown card-rounder">
+                        <div class="card-favorite">
+                            <a class="card-btn-favorite" asp-action="RemoverFavorito" asp-route-id="@item.Id">
+                                <i class="fas fa-heart text-danger"></i>
+                            </a>
+                        </div>
+                        <div class="card-img mt-3">
+                            <img src="~/images/product/@Html.DisplayFor(modelItem => item.Produto.Imagem)" class="card-img-top card-img-product" alt="@Html.DisplayFor(modelItem => item.Produto.Nome)">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.Produto.Nome)</h5>
+                            <p class="card-text">@Html.DisplayFor(modelItem => item.Produto.Preco)</p>
+                            <p class="card-text">@Html.DisplayFor(modelItem => item.Produto.Descricao)</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center">Você não possui favoritos</h1>
+            </div>
+        </div>
+    </div>
+}

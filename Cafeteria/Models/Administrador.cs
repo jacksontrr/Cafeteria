@@ -12,10 +12,5 @@ namespace Cafeteria.Models
         public string Email { get; set; }
         [Required(ErrorMessage = "O campo Email é obrigatório.")]
         public string Senha { get; set; }
-
-        public void CriptografarSenha()
-        {
-            Senha = BCrypt.Net.BCrypt.HashPassword(Senha);
-        }
     }
 }

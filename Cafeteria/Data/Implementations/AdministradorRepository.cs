@@ -1,6 +1,9 @@
 ﻿using Cafeteria.Data.Repositories;
 using Cafeteria.Models;
+using Cafeteria.Services.Implementations;
+using Cafeteria.Utilities;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace Cafeteria.Data.Implementations
 {
@@ -14,150 +17,95 @@ namespace Cafeteria.Data.Implementations
             _context = context;
         }
 
-        public IEnumerable<Administrador>? GetAll()
+        #region CRUD
+
+        public async Task Add(Administrador administrador)
         {
-            try
+            _context.Administradores.Add(administrador);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Update(int id, Administrador administrador)
+        {
+            var admin = _context.Administradores.FirstOrDefault(x => x.Id == id);
+            if (admin != null)
             {
-                var administradores = _context.Administradores;
-                if (administradores != null)
-                {
-                    return administradores;
-                }
-                return null;
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
+                admin.Nome = administrador.Nome;
+                admin.Email = administrador.Email;
+                admin.Senha = PasswordUtilities.PasswordHash(administrador.Senha);
+                _context.Administradores.Update(admin);
+                await _context.SaveChangesAsync();
             }
         }
 
-        public IEnumerable<Administrador>? GetNome(string nome)
+        public async Task Delete(int id)
         {
-            try
+            var admin = _context.Administradores.FirstOrDefault(x => x.Id == id);
+            if (admin != null)
             {
-                var administradores = _context.Administradores.Where(c => c.Nome.Contains(nome));
-                if (administradores != null)
-                {
-                    return administradores;
-                }
-                return null;
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
+                _context.Administradores.Remove(admin);
+                await _context.SaveChangesAsync();
             }
         }
 
-        public Administrador? Get(int id)
+        public async Task<IEnumerable<Administrador>> GetAll()
         {
-            try
-            {
-                var administrador = _context.Administradores.FirstOrDefault(c => c.Id == id);
-                if (administrador != null)
-                {
-                    return administrador;
-                }
-                return null;
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
+            return await _context.Administradores.ToListAsync();
         }
 
-        public Administrador? GetEmail(string email)
+        #endregion
+
+        #region Login
+
+        public async Task<Administrador> GetEmailSenha(string email, string senha)
         {
-            try
+            var administrador = await _context.Administradores.FirstOrDefaultAsync(c => c.Email == email);
+            if (administrador != null)
             {
-                var administrador = _context.Administradores.FirstOrDefault(c => c.Email == email);
-                if (administrador != null)
+
+                if (PasswordUtilities.PasswordVerify(senha, administrador.Senha))
                 {
                     return administrador;
                 }
-                return null;
             }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
+            return null;
         }
 
-        public Administrador? GetEmailSenha(string email, string senha)
+        #endregion
+
+        public async Task<IEnumerable<Administrador>> GetNome(string nome)
         {
-            try
+            List<Administrador> list = new List<Administrador>();
+            foreach (var administrador in _context.Administradores)
             {
-                var administrador = _context.Administradores.FirstOrDefault(c => c.Email == email);
-                if (administrador != null)
+                string nomeDB = CharacterTreatment.RemoveDiacritics(administrador.Nome).ToLower();
+                nome = CharacterTreatment.RemoveDiacritics(nome).ToLower();
+                if (nomeDB.Contains(nome))
                 {
-                    if (BCrypt.Net.BCrypt.Verify(senha, administrador.Senha))
-                    {
-                        return administrador;
-                    }
-                }
-                return null;
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
-        }
-
-        public void Add(Administrador administrador)
-        {
-            try
-            {
-                _context.Administradores.Add(administrador);
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
-        }
-
-        public void Update(int id, Administrador administrador)
-        {
-            try
-            {
-                var admin = _context.Administradores.FirstOrDefault(x => x.Id == id);
-                if (admin != null)
-                {
-                    admin.Nome = administrador.Nome;
-                    admin.Email = administrador.Email;
-                    admin.Senha = administrador.Senha;
-                    admin.CriptografarSenha();
-                    _context.Administradores.Update(admin);
+                    list.Add(administrador);
                 }
             }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
+            return list;
         }
 
-        public void Delete(int id)
+        public async Task<Administrador> Get(int id)
         {
-            try
-            {
-                var admin = _context.Administradores.FirstOrDefault(x => x.Id == id);
-                if (admin != null)
-                {
-                    _context.Administradores.Remove(admin);
-                }
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
+            return await _context.Administradores.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<Administrador> GetIdEmail(int id, string email)
+        {
+            return await _context.Administradores.FirstOrDefaultAsync(c => c.Id == id && c.Email == email);
+        }
+
+        public async Task<Administrador> GetEmail(string email)
+        {
+            return await _context.Administradores.FirstOrDefaultAsync(c => c.Email == email);
         }
 
         public bool Exists(int id)
         {
             return _context.Administradores.Any(x => x.Id == id);
-        }
-
-        public void SaveChanges()
-        {
-            _context.SaveChanges();
         }
     }
 }

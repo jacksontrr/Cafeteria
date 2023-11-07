@@ -2,6 +2,28 @@
 // More info at https://go.microsoft.com/fwlink/?LinkId=808241
 [
   {
+    "outputFileName": "wwwroot/css/Favorito.min.css",
+    "inputFiles": [
+      "wwwroot/css/Favorito.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/Favorito.min.js",
+    "inputFiles": [
+      "wwwroot/js/Favorito.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
     "outputFileName": "wwwroot/css/Produtos.min.css",
     "inputFiles": [
       "wwwroot/css/Produtos.css"

@@ -1,7 +1,10 @@
 ﻿using Cafeteria.Data;
 using Cafeteria.Models;
 using Cafeteria.Services.Interfaces;
+using Cafeteria.Utilities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
@@ -16,127 +19,95 @@ namespace Cafeteria.Services.Implementations
             _context = context;
         }
 
-        public void Add(Produto produto)
+        #region CRUD
+        public async Task Add(Produto produto)
         {
-            try
-            {
-                _context.Produtos.Add(produto);
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
+            _context.Produtos.Add(produto);
+            await _context.SaveChangesAsync();
         }
-        public void Update(int id, Produto produto)
-        {
-            try
-            {
-                var produtoEncontrado = _context.Produtos.FirstOrDefault(x => x.Id == id);
-                if (produtoEncontrado == null)
-                {
-                    return;
-                }
-                produtoEncontrado.Nome = produto.Nome;
-                produtoEncontrado.Preco = produto.Preco;
-                produtoEncontrado.Descricao = produto.Descricao;
-                produtoEncontrado.Imagem = produto.Imagem;
 
-                _context.Produtos.Update(produtoEncontrado);
-            }
-            catch (DbUpdateConcurrencyException e)
+        public async Task Update(int id, Produto produto)
+        {
+            var produtoEncontrado = _context.Produtos.FirstOrDefault(x => x.Id == id);
+            if (produtoEncontrado == null)
             {
-                throw new DbUpdateConcurrencyException(e.Message);
+                return;
+            }
+            produtoEncontrado.Nome = produto.Nome;
+            produtoEncontrado.Preco = produto.Preco;
+            produtoEncontrado.Descricao = produto.Descricao;
+            produtoEncontrado.Imagem = produto.Imagem;
+
+            _context.Produtos.Update(produtoEncontrado);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Delete(int id)
+        {
+            var produto = _context.Produtos.FirstOrDefault(x => x.Id == id);
+            if (produto != null)
+            {
+                _context.Produtos.Remove(produto);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<IEnumerable<Produto>> GetAll(int? clienteId)
+        {
+            // Iniciar a lista de produtos
+            List<Produto> produtos;
+
+            if (clienteId.HasValue)
+            {
+                produtos = await _context.Produtos
+                                        .Include(p => p.Favoritos.Where(f => f.ClienteId == clienteId))
+                                        .Distinct() // Isso garante que os produtos não estejam duplicados
+                                        .ToListAsync();
+            }
+            else
+            {
+                produtos = await _context.Produtos.ToListAsync();
             }
 
-        }
-        public void Delete(int id)
-        {
-            try
+            foreach (var produto in produtos)
             {
-                var produto = _context.Produtos.FirstOrDefault(x => x.Id == id);
-                if (produto != null)
+                if (String.IsNullOrEmpty(produto.Imagem))
                 {
-                    _context.Produtos.Remove(produto);
+                    produto.Imagem = "sem-imagem.png";
                 }
             }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
+
+            return produtos;
         }
+
+        public async Task<Produto> Get(int id)
+        {
+
+            return await _context.Produtos.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        #endregion
+
+        public async Task<IEnumerable<Produto>> GetNome(string nome)
+        {
+            List<Produto> list = new List<Produto>();
+            foreach (var produto in await _context.Produtos.ToListAsync())
+            {
+                string nomeBD = produto.Nome;
+                nomeBD = CharacterTreatment.RemoveDiacritics(nomeBD);
+                nome = CharacterTreatment.RemoveDiacritics(nome);
+                if (nomeBD.ToUpper().Contains(nome.ToUpper()))
+                {
+                    list.Add(produto);
+                }
+            }
+            return list;
+        }
+
         public bool Exists(int id)
         {
             return _context.Produtos.Any(x => x.Id == id);
         }
-        public Produto Get(int id)
-        {
-            try
-            {
-                return _context.Produtos.First(x => x.Id == id);
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
 
-        }
-        public IEnumerable<Produto> GetAll()
-        {
-            try
-            {
-                List<Produto> list = new List<Produto>();
-                foreach(var produto in _context.Produtos)
-                {
-                    if(String.IsNullOrEmpty(produto.Imagem))
-                    {
-                        // pegar imagem padrão sem-imagem.png
-                        produto.Imagem = "sem-imagem.png";
-                    }
-                    list.Add(produto);
-                }
-                return list;
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new DbUpdateConcurrencyException(e.Message);
-            }
-
-        }
-
-        public IEnumerable<Produto> GetNome(string nome)
-        {
-            foreach (var produto in _context.Produtos)
-            {
-                string nomeBD = produto.Nome;
-                nomeBD = RemoveDiacritics(nomeBD);
-                nome = RemoveDiacritics(nome);
-                if (nomeBD.ToUpper().Contains(nome.ToUpper()))
-                {
-                    yield return produto;
-                }
-            }
-            //return _context.Produtos.Where(x => x.Nome.Contains(nome));
-        }
-
-        public void SaveChanges()
-        {
-            _context.SaveChanges();
-        }
-
-        public static string RemoveDiacritics(string text)
-        {
-            var normalizedString = text.Normalize(NormalizationForm.FormD);
-            var stringBuilder = new StringBuilder();
-
-            foreach (var c in normalizedString)
-            {
-                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                {
-                    stringBuilder.Append(c);
-                }
-            }
-            return stringBuilder.ToString();
-        }
     }
 }

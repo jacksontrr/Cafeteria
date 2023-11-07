@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Text;
 using Cafeteria.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cafeteria.Controllers
 {
@@ -26,31 +27,42 @@ namespace Cafeteria.Controllers
         }
 
         // GET: Produtos
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var produtos = _produtoService.GetAll();
+            int? clienteId = null;
+            if (User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
+            {
+                clienteId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+            }
+            var produtos = await _produtoService.GetAll(clienteId);
             return produtos != null ?
                         View(produtos) :
                         Problem("Entity set 'CafeteriaContext.Produtos'  is null.");
         }
 
-        public IActionResult Search(string searchString)
+        public async Task<IActionResult> Search(string search)
         {
-            if (!string.IsNullOrEmpty(searchString))
+            try
             {
-                ViewBag.CurrentFilter = searchString;
-                return View("Index", _produtoService.GetNome(searchString));
-            }
-            else
+                if (!string.IsNullOrEmpty(search))
+                {
+                    ViewBag.CurrentFilter = search;
+                    return View("Index", await _produtoService.GetNome(search));
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+                }
+            } catch (Exception e)
             {
-                return RedirectToAction("Index");
+                return Problem(e.Message);
             }
         }
 
         // GET: Produtos/Details/5
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
-            var produto = _produtoService.Get(id.GetValueOrDefault());
+            var produto = await _produtoService.Get(id.GetValueOrDefault());
 
             if (id == null || produto == null)
             {
@@ -71,7 +83,7 @@ namespace Cafeteria.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ProdutoViewModel produtoViewModel)
+        public async Task<IActionResult> Create(ProdutoViewModel produtoViewModel)
         {
 
             if (ModelState.IsValid)
@@ -91,7 +103,7 @@ namespace Cafeteria.Controllers
                         Preco = produtoViewModel.Preco,
                         Imagem = produtoViewModel.Imagem
                     };
-                    _produtoService.Add(produto);
+                    await _produtoService.Add(produto);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception e)
@@ -104,9 +116,9 @@ namespace Cafeteria.Controllers
         }
 
         // GET: Produtos/Edit/5
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            var produto = _produtoService.Get(id.GetValueOrDefault());
+            var produto = await _produtoService.Get(id.GetValueOrDefault());
 
             if (id == null || produto == null)
             {
@@ -130,9 +142,9 @@ namespace Cafeteria.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, ProdutoViewModel produtoViewModel)
+        public async Task<IActionResult> Edit(int id, ProdutoViewModel produtoViewModel)
         {
-            Produto produto = _produtoService.Get(id);
+            Produto produto = await _produtoService.Get(id);
 
             if (id != produtoViewModel.Id || produto == null)
             {
@@ -150,7 +162,7 @@ namespace Cafeteria.Controllers
                         return View("Edit", produtoViewModel);
                     }
 
-                    _produtoService.Update(id, new Produto
+                    await _produtoService.Update(id, new Produto
                     {
                         Nome = produtoViewModel.Nome,
                         Descricao = produtoViewModel.Descricao,
@@ -158,7 +170,7 @@ namespace Cafeteria.Controllers
                         Imagem = produtoViewModel.Imagem
                     });
 
-                    if (_produtoService.CheckIfItHasBeenChanged(produto, _produtoService.Get(id)))
+                    if (_produtoService.CheckIfItHasBeenChanged(produto, await _produtoService.Get(id)))
                     {
                         return RedirectToAction(nameof(Index));
                     }
@@ -194,15 +206,15 @@ namespace Cafeteria.Controllers
         // POST: Produtos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
-                var produto = _produtoService.Get(id);
+                var produto = await _produtoService.Get(id);
 
                 if (produto != null)
                 {
-                    _produtoService.Delete(id);
+                    await _produtoService.Delete(id);
                 }
                 else
                 {
@@ -214,6 +226,43 @@ namespace Cafeteria.Controllers
                 return Problem(e.Message);
             }
 
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Ação de favoritar
+        [Authorize(Roles = "Cliente")]
+        public async Task<IActionResult> Favoritar(int id)
+        {
+            try
+            {
+                int clienteId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+                var produto = await _produtoService.Get(id);
+                if (produto != null)
+                {
+                    var favorito = new Favorito
+                    {
+                        ClienteId = clienteId,
+                        ProdutoId = id
+                    };
+
+                    var encontrado = await _produtoService.GetFavorito(favorito);
+                    if (encontrado != null)
+                    {
+                        await _produtoService.DeleteFavorite(encontrado.Id);
+                        return RedirectToAction(nameof(Index));
+                    }
+                    await _produtoService.SaveFavorite(favorito);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception e)
+            {
+                return Problem(e.Message);
+            }
 
             return RedirectToAction(nameof(Index));
         }

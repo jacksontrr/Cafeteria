@@ -8,6 +8,7 @@ using Cafeteria.ViewModels;
 using Cafeteria.Services.Interfaces;
 using NuGet.Common;
 using NuGet.Configuration;
+using Cafeteria.Services.Implementations;
 
 namespace Cafeteria.Controllers
 {
@@ -21,14 +22,13 @@ namespace Cafeteria.Controllers
             _loginService = loginService;
         }
 
-        // tela de login
         public IActionResult Index()
         {
             ViewData["Layout"] = "_Login";
 
             if (User.IsInRole("Administrador"))
             {
-                return RedirectToAction("Index", "Administrador");
+                return RedirectToAction("Index", "Administradores");
             }
 
             if (User.IsInRole("Cliente"))
@@ -39,14 +39,13 @@ namespace Cafeteria.Controllers
             return View();
         }
 
-        // tela de login
         public IActionResult Administrador()
         {
             ViewData["Layout"] = "_Login";
 
             if (User.IsInRole("Administrador"))
             {
-                return RedirectToAction("Index", "Administrador");
+                return RedirectToAction("Index", "Administradores");
             }
 
             if (User.IsInRole("Cliente"))
@@ -57,7 +56,6 @@ namespace Cafeteria.Controllers
             return View();
         }
 
-        // tela de cadastrar cliente
         public IActionResult Cadastrar()
         {
             ViewData["Layout"] = "_Login";
@@ -67,7 +65,7 @@ namespace Cafeteria.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Registro(UsuarioCadastroViewModel model, bool admin)
+        public async Task<IActionResult> Registro(UsuarioSalvaViewModel model)
         {
             ViewData["Layout"] = "_Login";
             if (ModelState.IsValid)
@@ -79,7 +77,13 @@ namespace Cafeteria.Controllers
                     ModelState.AddModelError("ConfirmacaoSenha", "As senhas não coincidem");
                     return View("Cadastrar", model);
                 }
-                if (_loginService.GetEmailCliente(model.Email) != null || _loginService.GetEmailAdministrador(model.Email) != null)
+                // buscar verificar cliente e administrador ao mesmo tempo 
+                var taskCliente = _loginService.GetEmailCliente(model.Email);
+                var taskAdministrador = _loginService.GetEmailAdministrador(model.Email);
+
+                await Task.WhenAll(taskCliente, taskAdministrador);
+
+                if (taskCliente.Result != null || taskAdministrador.Result != null)
                 {
                     ModelState.AddModelError("Email", "Email já cadastrado");
                     return View("Cadastrar", model);
@@ -89,7 +93,7 @@ namespace Cafeteria.Controllers
                 cliente.Email = model.Email;
                 cliente.Senha = model.Senha;
 
-                cliente = _loginService.RegistrarCliente(cliente);
+                cliente = await _loginService.RegistrarCliente(cliente);
 
                 UsuarioViewModel usuario = new UsuarioViewModel
                 {
@@ -109,24 +113,87 @@ namespace Cafeteria.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Alterar(int id, string emailOld, UsuarioSalvaViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                if (model.Senha != model.ConfirmacaoSenha)
+                {
+                    ModelState.AddModelError("Senha", "As senhas não coincidem");
+                    ModelState.AddModelError("ConfirmacaoSenha", "As senhas não coincidem");
+                    return View("Configuracao", model);
+                }
+
+                var cliente = await _loginService.GetIdEmailCliente(id, emailOld);
+                var administrador = await _loginService.GetIdEmailAdministrador(id, emailOld);
+
+                if (cliente != null)
+                {
+                    cliente = await _loginService.UpdateCliente(id, cliente, model);
+                    if (cliente == null)
+                    {
+                        ModelState.AddModelError("Email", "Email já cadastrado");
+                        return View("Configuracao", model);
+                    }
+                    else
+                    {
+                        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                        await SignInAsync(new UsuarioViewModel(cliente), true, false);
+                        return RedirectToAction("Index", "Produtos");
+                    }
+                }
+                else
+                {
+                    
+                    if (administrador != null)
+                    {
+                        administrador = await _loginService.UpdateAdministrador(id, administrador, model);
+                        if (administrador == null)
+                        {
+                            ModelState.AddModelError("Email", "Email já cadastrado");
+                            return View("Configuracao", model);
+                        }
+                        else
+                        {
+                            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                            await SignInAsync(new UsuarioViewModel(administrador), true, false);
+                            return RedirectToAction("Index", "Produtos");
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("ConfirmacaoSenha", "Não conseguiu encontrar a conta");
+                        return View("Configuracao", model);
+                    }
+                }
+            }
+            return View("Configuracao", model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(UsuarioViewModel model)
         {
             ViewData["Layout"] = "_Login";
 
             if (ModelState.IsValid)
             {
-                var cliente = _loginService.GetCliente(model.Email, model.Senha);
-                if (cliente != null)
+                try
                 {
-                    UsuarioViewModel usuario = new UsuarioViewModel
+                    var cliente = await _loginService.GetCliente(model.Email, model.Senha);
+                    if (cliente != null)
                     {
-                        Id = cliente.Id,
-                        Nome = cliente.Nome,
-                        Email = cliente.Email,
-                        Senha = cliente.Senha
-                    };
-                    await SignInAsync(usuario, true, false);
-                    return RedirectToAction("Index", "Produtos");
+                        await SignInAsync(new UsuarioViewModel(cliente), true, false);
+                        return RedirectToAction("Index", "Produtos");
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("Email", "Erro ao buscar no banco de dados.");
+                    return View("Index", model);
                 }
                 ModelState.AddModelError("Email", "Email ou senha incorretos");
                 return View("Index", model);
@@ -144,26 +211,18 @@ namespace Cafeteria.Controllers
 
             if (ModelState.IsValid)
             {
-                var administrador = _loginService.GetAdministrador(model.Email, model.Senha);
+                var administrador = await _loginService.GetAdministrador(model.Email, model.Senha);
                 if (administrador != null)
                 {
-                    UsuarioViewModel usuario = new UsuarioViewModel
-                    {
-                        Id = administrador.Id,
-                        Nome = administrador.Nome,
-                        Email = administrador.Email,
-                        Senha = administrador.Senha
-                    };
-                    await SignInAsync(model, true, true);
-
-                    return RedirectToAction("Index", "Administrador");
+                    await SignInAsync(new UsuarioViewModel(administrador), true, true);
+                    return RedirectToAction("Index", "Administradores");
                 }
 
                 ModelState.AddModelError("Email", "Email ou senha incorretos");
-                return View("Index", model);
+                return View("Administrador", model);
 
             }
-            return View("Index", model);
+            return View("Administrador", model);
         }
 
         [HttpGet]
@@ -178,6 +237,50 @@ namespace Cafeteria.Controllers
         {
             ViewData["Layout"] = "_Layout";
             return View();
+        }
+
+        public async Task<IActionResult> Configuracao()
+        {
+            Models.Administrador administrador;
+            UsuarioSalvaViewModel usuarioSalvaViewModel = new UsuarioSalvaViewModel();
+            try
+            {
+                var usuario = await _loginService.GetIdEmailCliente(int.Parse(User.FindFirstValue("Id")), User.FindFirstValue(ClaimTypes.Email));
+                if (usuario == null)
+                {
+                    administrador = await _loginService.GetIdEmailAdministrador(int.Parse(User.FindFirstValue("Id")), User.FindFirstValue(ClaimTypes.Email));
+                    if (administrador == null)
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        usuarioSalvaViewModel = new UsuarioSalvaViewModel
+                        {
+                            Id = administrador.Id,
+                            Nome = administrador.Nome,
+                            Email = administrador.Email
+                        };
+                    }
+                }
+                else
+                {
+                    usuarioSalvaViewModel = new UsuarioSalvaViewModel
+                    {
+                        Id = usuario.Id,
+                        Nome = usuario.Nome,
+                        Email = usuario.Email
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return Problem(e.Message);
+            }
+
+
+            return View(usuarioSalvaViewModel);
         }
 
         protected async Task SignInAsync(UsuarioViewModel user, bool isPersistent, bool admin)

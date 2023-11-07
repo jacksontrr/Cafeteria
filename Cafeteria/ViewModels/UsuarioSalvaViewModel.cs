@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Cafeteria.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Cafeteria.ViewModels
 {
-    public class UsuarioCadastroViewModel
+    public class UsuarioSalvaViewModel
     {
+        public int Id { get; set; }
         [Required(ErrorMessage = "O campo Email é obrigatório.")]
         public string Nome { get; set; }
         [Required(ErrorMessage = "O campo Email é obrigatório.")]
