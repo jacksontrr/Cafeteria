@@ -7,53 +7,45 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cafeteria.Data;
 using Cafeteria.Models;
+using Cafeteria.Services.Interfaces;
+using Cafeteria.Services.Implementations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cafeteria.Controllers
 {
     public class ClientesController : Controller
     {
-        private readonly CafeteriaContext _context;
+        private readonly IClienteService _clienteService;
 
-        public ClientesController(CafeteriaContext context)
+        public ClientesController(IClienteService clienteService)
         {
-            _context = context;
+            _clienteService = clienteService;
         }
 
         // GET: Clientes
         public async Task<IActionResult> Index()
         {
-              return _context.Clientes != null ? 
-                          View(await _context.Clientes.ToListAsync()) :
-                          Problem("Entity set 'CafeteriaContext.Usuarios'  is null.");
+            return View(await _clienteService.GetAll());
         }
 
         public async Task<IActionResult> Search(string search)
         {
-            ViewData["Title"] = "Search";
-
-            var usuarios = _context.Clientes.AsQueryable();
-
             if (!string.IsNullOrEmpty(search))
             {
-                usuarios = usuarios.Where(p => p.Nome.Contains(search));
+                ViewBag.CurrentFilter = search;
+                return View("Index", await _clienteService.GetNome(search));
             }
-
-            ViewBag.CurrentFilter = search;
-
-            return View("Index", await usuarios.ToListAsync());
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         // GET: Clientes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Clientes == null)
-            {
-                return NotFound();
-            }
-
-            var usuario = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuario == null)
+            var usuario = await _clienteService.Get(id.GetValueOrDefault());
+            if (id == null || usuario == null)
             {
                 return NotFound();
             }
@@ -76,8 +68,7 @@ namespace Cafeteria.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(usuario);
-                await _context.SaveChangesAsync();
+                await _clienteService.Add(usuario);
                 return RedirectToAction(nameof(Index));
             }
             return View(usuario);
@@ -86,13 +77,9 @@ namespace Cafeteria.Controllers
         // GET: Clientes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Clientes == null)
-            {
-                return NotFound();
-            }
 
-            var usuario = await _context.Clientes.FindAsync(id);
-            if (usuario == null)
+            var usuario = await _clienteService.Get(id.GetValueOrDefault());
+            if (id == null || usuario == null)
             {
                 return NotFound();
             }
@@ -115,12 +102,11 @@ namespace Cafeteria.Controllers
             {
                 try
                 {
-                    _context.Update(usuario);
-                    await _context.SaveChangesAsync();
+                    await _clienteService.Update(id, usuario);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UsuarioExists(usuario.Id))
+                    if (!_clienteService.Exists(id))
                     {
                         return NotFound();
                     }
@@ -137,13 +123,12 @@ namespace Cafeteria.Controllers
         // GET: Clientes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Clientes == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var usuario = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var usuario = await _clienteService.Get(id.GetValueOrDefault());
             if (usuario == null)
             {
                 return NotFound();
@@ -157,23 +142,39 @@ namespace Cafeteria.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Clientes == null)
-            {
-                return Problem("Entity set 'CafeteriaContext.Usuarios'  is null.");
-            }
-            var usuario = await _context.Clientes.FindAsync(id);
+
+            var usuario = await _clienteService.Get(id);
             if (usuario != null)
             {
-                _context.Clientes.Remove(usuario);
+                await _clienteService.Delete(id);
             }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UsuarioExists(int id)
+        [Authorize(Roles = "Cliente")]
+        public async Task<IActionResult> Favoritos()
         {
-          return (_context.Clientes?.Any(e => e.Id == id)).GetValueOrDefault();
+            int id = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+            var usuario = await _clienteService.Get(id);
+            if (usuario != null)
+            {
+                return View(await _clienteService.GetClienteAll(id));
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        
+
+        [Authorize(Roles = "Cliente")]
+        public async Task<IActionResult> RemoverFavorito(int id)
+        {
+            var favorito = await _clienteService.GetFavoritoById(id);
+            if (favorito != null)
+            {
+                await _clienteService.DeleteFavorito(id);
+                return RedirectToAction(nameof(Favoritos));
+            }
+
+            return RedirectToAction(nameof(Favoritos));
         }
     }
 }
