@@ -1,42 +1,37 @@
 ﻿@model Cafeteria.Models.Produto
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes";
 }
 
-<h1>Details</h1>
+<h1>Detalhes</h1>
 
 <div>
     <h4>Produto</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Preco)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Preco)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Imagem)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Imagem)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="row">
+        <!-- Imagem do Produto -->
+        <div class="col-md-6">
+            <img src="~/images/product/@Html.DisplayFor(model => model.Imagem)" class="img-fluid" alt="Café Expresso">
+        </div>
+
+        <!-- Detalhes do Produto -->
+        <div class="col-md-6">
+            <h1>@Html.DisplayFor(model => model.Nome)</h1>
+            <p class="text-muted">@Html.DisplayFor(model => model.Descricao)</p>
+            <h2 class="my-3">@Html.DisplayFor(model => model.Preco)</h2>
+            <p class="mb-4">@Html.DisplayFor(model => model.Descricao)</p>
+
+            <!-- Botão Adicionar ao Carrinho -->
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary btn-lg">Adicionar ao Carrinho</button>
+            </div>
+
+            <!-- Links de Ação -->
+            <div class="mt-4">
+                <a href="caminho_para_editar" class="btn btn-outline-secondary">Editar</a>
+                <a href="caminho_para_lista" class="btn btn-outline-secondary">Voltar à Lista</a>
+            </div>
+        </div>
+    </div>
 </div>
