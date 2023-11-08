@@ -3,35 +3,54 @@
 @{
     ViewData["Title"] = "Detalhes";
 }
+<link rel="stylesheet" href="~/css/ProdutosDetalhes.css" asp-append-version="true" />
 
-<h1>Detalhes</h1>
+
+<a id="backButton" class="btn btn-outline-light btn-circle mb-3 bg-brown btn-brown btn-back">
+    <i class="fas fa-arrow-left"></i>
+</a>
 
 <div>
-    <h4>Produto</h4>
-    <hr />
+
     <div class="row">
         <!-- Imagem do Produto -->
         <div class="col-md-6">
-            <img src="~/images/product/@Html.DisplayFor(model => model.Imagem)" class="img-fluid" alt="Café Expresso">
+            <div class="card bg-brown align-items-center">
+                <img src="~/images/product/@Html.DisplayFor(model => model.Imagem)" class="img-details  " alt="Café Expresso">
+            </div>
         </div>
 
         <!-- Detalhes do Produto -->
-        <div class="col-md-6">
+        <div class="col-md-6 d-flex justify-content-between flex-wrap flex-column mt-2 mt-md-0">
+
             <h1>@Html.DisplayFor(model => model.Nome)</h1>
-            <p class="text-muted">@Html.DisplayFor(model => model.Descricao)</p>
-            <h2 class="my-3">@Html.DisplayFor(model => model.Preco)</h2>
-            <p class="mb-4">@Html.DisplayFor(model => model.Descricao)</p>
+            <div class="description">
+                <p class="text-muted">@Html.DisplayFor(model => model.Descricao)</p>
+            </div>
+
+            <div class="price">
+                <h2>@Html.DisplayFor(model => model.Preco)</h2>
+            </div>
+
+            @*             <p class="mb-4">@Html.DisplayFor(model => model.Descricao)</p> *@
 
             <!-- Botão Adicionar ao Carrinho -->
-            <div class="d-flex justify-content-end">
-                <button class="btn btn-primary btn-lg">Adicionar ao Carrinho</button>
-            </div>
+            @* <a asp-action="Index" asp-controller="Produtos" class="btn btn-outline-secondary">Voltar à Lista</a> *@
+            <button class="btn btn-primary btn-lg">Adicionar ao Carrinho</button>
+
 
             <!-- Links de Ação -->
-            <div class="mt-4">
-                <a href="caminho_para_editar" class="btn btn-outline-secondary">Editar</a>
-                <a href="caminho_para_lista" class="btn btn-outline-secondary">Voltar à Lista</a>
-            </div>
+            @* <div class="d-flex justify-content-end mt-3">
+            <a href="caminho_para_editar" class="btn btn-outline-secondary">Editar</a>
+            </div> *@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        let urlReferencia = "@(TempData["ReferrerUrl"])";
+    </script>
+
+    <script src="~/js/ProdutosDetalhes.js"></script>
+}
