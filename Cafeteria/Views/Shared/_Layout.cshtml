@@ -1,4 +1,9 @@
 ﻿@using System.Security.Claims;
+@{
+    var routeController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var routeAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var showForm = (routeController == "Produtos" && routeAction == "Index");
+}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -71,22 +76,25 @@
             </div>
         </nav>
 
-
-        <form asp-controller="Produtos" asp-action="Search" method="get">
-            <div class="container-fluid search-bar d-md-none d-flex">
-                <div class="search shadow-white mx-4">
-                    <div class="input-group">
-                        <input type="text" class="search-input form-control" placeholder="Pesquisar" aria-label="Pesquisar" name="search" aria-describedby="button-addon2" value="@(ViewBag.CurrentFilter ?? "")">
-                        <div class="search-finishing">
-                            <button class="search-button btn btn-padding btn-rounded" type="submit" id="search-send-navbar"><i class="fas fa-search"></i></button>
+        @if (showForm)
+        {
+            <form asp-controller="Produtos" asp-action="Search" method="get">
+                <div class="container-fluid search-bar d-md-none d-flex">
+                    <div class="search shadow-white mx-4">
+                        <div class="input-group">
+                            <input type="text" class="search-input form-control" placeholder="Pesquisar" aria-label="Pesquisar" name="search" aria-describedby="button-addon2" value="@(ViewBag.CurrentFilter ?? "")">
+                            <div class="search-finishing">
+                                <button class="search-button btn btn-padding btn-rounded" type="submit" id="search-send-navbar"><i class="fas fa-search"></i></button>
+                            </div>
                         </div>
                     </div>
+                    <a class="btn btn-outline-light btn-rounded btn-padding shadow-white">
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
                 </div>
-                <a class="btn btn-outline-light btn-rounded btn-padding shadow-white">
-                    <i class="fas fa-shopping-cart"></i>
-                </a>
-            </div>
-        </form>
+            </form>
+        }
+        
         @* <a class="navbar-brand">Navbar</a>
         <form class="form-inline">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -95,7 +103,7 @@
 
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-3 mt-5">
             @RenderBody()
         </main>
     </div>
@@ -104,12 +112,14 @@
 
             <a class="navbar-white" asp-area="" asp-controller="/" asp-action="Index"><i class="fas fa-home"></i></a>
 
+            @if (User.IsInRole("Cliente"))
+            {
+                <a class="navbar-white" asp-controller="Clientes" asp-action="Favoritos"><i class="fas fa-heart"></i></a>
 
-            <a class="navbar-white" asp-area="" asp-controller="Favoritos" asp-action="Index"><i class="fas fa-heart"></i></a>
+                <a class="navbar-white" asp-area="" asp-controller="Carrinhos" asp-action="Index"><i class="fas fa-receipt"></i></a>
 
-            <a class="navbar-white" asp-area="" asp-controller="Carrinhos" asp-action="Index"><i class="fas fa-receipt"></i></a>
-
-            <a class="navbar-white" asp-area="" asp-controller="Notificacoes" asp-action="Index"><i class="fas fa-bell"></i></a>
+                <a class="navbar-white" asp-area="" asp-controller="Notificacoes" asp-action="Index"><i class="fas fa-bell"></i></a>
+            }
 
             @* <a class="navbar-brand" asp-area="" asp-controller="Carrinho" asp-action="Index"><i class="fas fa-shopping-basket"></i></a> *@
             @if (User.Identity.IsAuthenticated)
