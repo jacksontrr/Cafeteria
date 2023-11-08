@@ -13,9 +13,9 @@
             @foreach (var item in Model)
             {
                 <div class="col-md-3 col-6">
-                    <div class="card card-rounder mb-4 shadow bg-brown card-rounder">
+                    <div class="card card-rounder mb-4 shadow bg-brown card-rounder" id="@item.Produto.Id">
                         <div class="card-favorite">
-                            <a class="card-btn-favorite" asp-action="RemoverFavorito" asp-route-id="@item.Id">
+                            <a class="card-btn-favorite" asp-action="RemoverFavorito" asp-route-id="@item.">
                                 <i class="fas fa-heart text-danger"></i>
                             </a>
                         </div>
@@ -42,4 +42,8 @@ else
             </div>
         </div>
     </div>
+}
+
+@section Scripts {
+    <script src="~/js/Favorito.js"></script>
 }
