@@ -121,6 +121,17 @@ body {
     right: 0;
 }
 
+.btn-back {
+    position: relative;
+    top: 0;
+    right: auto;
+    left: 5px;
+    bottom: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
 .btn-circle {
     border-radius: 50%;
     width: 40px;
@@ -132,6 +143,7 @@ body {
     color: #FFF;
     border-color: #E9E8F8;
 }
+
     .btn-brown:hover, .btn-brown:focus, .btn-brown:active {
         background-color: #E9E8E8;
         color: #926345;
@@ -149,6 +161,6 @@ body {
     bottom: 10px;
 }
 
-.background-color-transparent{
+.background-color-transparent {
     background-color: transparent !important;
 }
