@@ -36,3 +36,12 @@
     .card-btn-favorite:hover, .card-btn-favorite:active, .card-btn-favorite:focus {
         color: #B5A79D;
     }
+
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efeito suave de transição */
+    cursor: pointer; /* Muda o ponteiro para o estilo de clique */
+}
+    .card:hover {
+        transform: scale(1.05); /* Aumenta ligeiramente o tamanho do cartão */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adiciona uma sombra para um efeito "levitando" */
+    }
