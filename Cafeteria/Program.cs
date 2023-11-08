@@ -11,6 +11,7 @@ using Cafeteria.Services.Interfaces;
 using Cafeteria.Services.Implementations;
 using Cafeteria.Data.Repositories;
 using Cafeteria.Data.Implementations;
+using Cafeteria.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +79,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware<LastRequestMiddleware>();
 
 //app.MapDefaultControllerRoute();
 

@@ -14,6 +14,8 @@ using System.Globalization;
 using System.Text;
 using Cafeteria.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
+using Cafeteria.Utilities;
 
 namespace Cafeteria.Controllers
 {
@@ -52,7 +54,8 @@ namespace Cafeteria.Controllers
                 {
                     return RedirectToAction("Index");
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 return Problem(e.Message);
             }
@@ -61,6 +64,9 @@ namespace Cafeteria.Controllers
         [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> Details(int? id)
         {
+
+            TempData["ReferrerUrl"] = Request.Cookies["LastRequest"];
+
             var produto = await _produtoService.Get(id.GetValueOrDefault());
 
             if (id == null || produto == null)
@@ -70,7 +76,7 @@ namespace Cafeteria.Controllers
 
             return View(produto);
         }
-        
+
         public IActionResult Create()
         {
             return View();
