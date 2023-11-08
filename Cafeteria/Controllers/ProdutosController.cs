@@ -26,7 +26,6 @@ namespace Cafeteria.Controllers
             _produtoService = produtoService;
         }
 
-        // GET: Produtos
         public async Task<IActionResult> Index()
         {
             int? clienteId = null;
@@ -59,7 +58,6 @@ namespace Cafeteria.Controllers
             }
         }
 
-        // GET: Produtos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             var produto = await _produtoService.Get(id.GetValueOrDefault());
@@ -71,16 +69,12 @@ namespace Cafeteria.Controllers
 
             return View(produto);
         }
-
-        // GET: Produtos/Create
+        
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Produtos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProdutoViewModel produtoViewModel)
@@ -115,7 +109,6 @@ namespace Cafeteria.Controllers
             return View(produtoViewModel);
         }
 
-        // GET: Produtos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             var produto = await _produtoService.Get(id.GetValueOrDefault());
@@ -137,9 +130,6 @@ namespace Cafeteria.Controllers
             return View(produtoViewModel);
         }
 
-        // POST: Produtos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ProdutoViewModel produtoViewModel)
@@ -190,7 +180,6 @@ namespace Cafeteria.Controllers
             return View(produtoViewModel);
         }
 
-        // GET: Produtos/Delete/5
         public IActionResult Delete(int? id)
         {
             var produto = _produtoService.Get(id.GetValueOrDefault());
@@ -203,7 +192,6 @@ namespace Cafeteria.Controllers
             return View(produto);
         }
 
-        // POST: Produtos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -230,7 +218,6 @@ namespace Cafeteria.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Ação de favoritar
         [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> Favoritar(int id)
         {
