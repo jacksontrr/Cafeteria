@@ -58,6 +58,7 @@ namespace Cafeteria.Controllers
             }
         }
 
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> Details(int? id)
         {
             var produto = await _produtoService.Get(id.GetValueOrDefault());
