@@ -82,8 +82,12 @@ namespace Cafeteria.Services.Implementations
 
         public async Task<Produto> Get(int id)
         {
-
-            return await _context.Produtos.FirstOrDefaultAsync(x => x.Id == id);
+            Produto produto = await _context.Produtos.FirstOrDefaultAsync(x => x.Id == id);
+            if (String.IsNullOrEmpty(produto.Imagem))
+            {
+                produto.Imagem = "sem-imagem.png";
+            }
+            return produto;
         }
 
         #endregion
