@@ -58,7 +58,7 @@
                                     {
                                         <a asp-action="Favoritos" asp-controller="Clientes" class="dropdown-item">Favoritos</a>
                                     }
-                                    <a asp-action="Configuracao" asp-controller="Login" class="dropdown-item" >Configurações</a>
+                                    <a asp-action="Configuracao" asp-controller="Login" class="dropdown-item">Configurações</a>
                                     <div class="dropdown-divider"></div>
                                     <a asp-action="Logout" asp-controller="Login" class="dropdown-item">Sair</a>
                                 </div>
@@ -94,7 +94,7 @@
                 </div>
             </form>
         }
-        
+
         @* <a class="navbar-brand">Navbar</a>
         <form class="form-inline">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -102,6 +102,9 @@
         </form> *@
 
     </header>
+    <a id="backButton" class="btn btn-outline-light btn-circle mb-3 ms-3 mt-3 bg-brown btn-brown btn-back d-md-none d-flex" style="display:none !important;">
+        <i class="fas fa-arrow-left"></i>
+    </a>
     <div class="container">
         <main role="main" class="pb-3 mt-3">
             @RenderBody()

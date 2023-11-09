@@ -65,8 +65,6 @@ namespace Cafeteria.Controllers
         public async Task<IActionResult> Details(int? id)
         {
 
-            TempData["ReferrerUrl"] = Request.Cookies["LastRequest"];
-
             var produto = await _produtoService.Get(id.GetValueOrDefault());
 
             if (id == null || produto == null)
