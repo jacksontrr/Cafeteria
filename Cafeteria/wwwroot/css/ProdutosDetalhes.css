@@ -33,3 +33,28 @@
     .card-btn-favorite:hover, .card-btn-favorite:active, .card-btn-favorite:focus {
         color: #B5A79D;
     }
+
+.quantity-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+#quantity {
+    width: 40px;
+    height: 30px;
+    text-align: center;
+    font-size: 16px;
+    border: 1px solid #ccc;
+}

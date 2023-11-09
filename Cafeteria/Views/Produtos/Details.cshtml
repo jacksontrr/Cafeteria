@@ -49,7 +49,17 @@
 
             <!-- Botão Adicionar ao Carrinho -->
             @* <a asp-action="Index" asp-controller="Produtos" class="btn btn-outline-secondary">Voltar à Lista</a> *@
-            <button class="btn btn-primary btn-lg">Adicionar ao Carrinho</button>
+            <div class="d-flex justify-content-between">
+                <div class="quantity-container">
+                    <div class="input-group">
+                        <button class="btn btn-danger quantity-button" id="decrease">-</button>
+                        <input type="text" id="quantity" value="1">
+                        <button class="btn btn-primary quantity-button" id="increase">+</button>
+
+                    </div>
+                </div>
+                <button class="btn btn-success btn-lg">Adicionar ao Carrinho</button>
+            </div>
 
 
             <!-- Links de Ação -->
