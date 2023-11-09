@@ -14,3 +14,22 @@
     margin-bottom: 1rem;
     margin-right: auto;
 }
+
+.card-favorite {
+    position: absolute;
+    top: 3px;
+    right: 8px;
+    left: auto;
+}
+
+.card-btn-favorite {
+    color: #fff;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    font-size: 1.5rem;
+}
+
+    .card-btn-favorite:hover, .card-btn-favorite:active, .card-btn-favorite:focus {
+        color: #B5A79D;
+    }

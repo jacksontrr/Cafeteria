@@ -226,6 +226,7 @@ namespace Cafeteria.Controllers
         [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> Favoritar(int id)
         {
+            string url = "";
             try
             {
                 int clienteId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
@@ -242,7 +243,9 @@ namespace Cafeteria.Controllers
                     if (encontrado != null)
                     {
                         await _produtoService.DeleteFavorite(encontrado.Id);
-                        return RedirectToAction(nameof(Index));
+                        url = Request.Cookies["LastRequest"];
+
+                        return Redirect(url);
                     }
                     await _produtoService.SaveFavorite(favorito);
                 }
@@ -255,8 +258,8 @@ namespace Cafeteria.Controllers
             {
                 return Problem(e.Message);
             }
-
-            return RedirectToAction(nameof(Index));
+            url = Request.Cookies["LastRequest"];
+            return Redirect(url);
         }
 
     }

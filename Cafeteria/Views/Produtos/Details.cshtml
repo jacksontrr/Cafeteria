@@ -2,6 +2,13 @@
 
 @{
     ViewData["Title"] = "Detalhes";
+    int clienteId = 0;
+    bool isFavorite = false;
+    if (User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
+    {
+        clienteId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+        isFavorite = Model.Favoritos.Any(f => f.ClienteId == clienteId);
+    }
 }
 <link rel="stylesheet" href="~/css/ProdutosDetalhes.css" asp-append-version="true" />
 
@@ -13,6 +20,15 @@
         <!-- Imagem do Produto -->
         <div class="col-md-6">
             <div class="card bg-brown align-items-center">
+                
+                @if (User.IsInRole("Cliente") || !User.Identity.IsAuthenticated)
+                {
+                    <div class="card-favorite">
+                        <a class="card-btn-favorite" asp-action="Favoritar" asp-route-id="@Model.Id">
+                            <i class="fas fa-heart @(isFavorite ? "text-danger" : "")"></i>
+                        </a>
+                    </div>
+                }
                 <img src="~/images/product/@Html.DisplayFor(model => model.Imagem)" class="img-details  " alt="Café Expresso">
             </div>
         </div>
