@@ -67,7 +67,7 @@ namespace Cafeteria.Controllers
 
             var produto = await _produtoService.Get(id.GetValueOrDefault());
 
-            if (id == null || produto == null)
+            if (produto == null)
             {
                 return NotFound();
             }

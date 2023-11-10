@@ -83,9 +83,12 @@ namespace Cafeteria.Services.Implementations
         public async Task<Produto> Get(int id)
         {
             Produto produto = await _context.Produtos.Include(x => x.Favoritos).FirstOrDefaultAsync(x => x.Id == id);
-            if (String.IsNullOrEmpty(produto.Imagem))
+            if (produto != null)
             {
-                produto.Imagem = "sem-imagem.png";
+                if (String.IsNullOrEmpty(produto.Imagem))
+                {
+                    produto.Imagem = "sem-imagem.png";
+                }
             }
             return produto;
         }
