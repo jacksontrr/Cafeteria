@@ -22,7 +22,7 @@ builder.Services.AddMvc();
 builder.Services.AddDbContext<CafeteriaContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("CafeteriaContext")));
 builder.Services.AddSingleton<IFileProvider>(
     new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
-#region Services
+#region Repositories
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IAdministradorRepository, AdministradorRepository>();
@@ -34,6 +34,11 @@ builder.Services.AddScoped<IAdministradorService, AdministradorService>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
+#endregion
+
+#region Utilities
+builder.Services.AddScoped<Cart>();
+builder.Services.AddScoped<CartItem>();
 #endregion
 
 builder.Services.AddHsts(options =>
