@@ -188,9 +188,9 @@ namespace Cafeteria.Controllers
             return View(produtoViewModel);
         }
 
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            var produto = _produtoService.Get(id.GetValueOrDefault());
+            var produto = await _produtoService.Get(id.GetValueOrDefault());
 
             if (id == null || produto == null)
             {
