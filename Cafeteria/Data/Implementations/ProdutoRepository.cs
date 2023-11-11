@@ -98,7 +98,11 @@ namespace Cafeteria.Services.Implementations
         public async Task<IEnumerable<Produto>> GetNome(string nome)
         {
             List<Produto> list = new List<Produto>();
-            foreach (var produto in await _context.Produtos.ToListAsync())
+            var products = await _context.Produtos
+                                        .Include(p => p.Favoritos)
+                                        .Distinct() // Isso garante que os produtos não estejam duplicados
+                                        .ToListAsync();
+            foreach (var produto in products)
             {
                 string nomeBD = produto.Nome;
                 nomeBD = CharacterTreatment.RemoveDiacritics(nomeBD);
