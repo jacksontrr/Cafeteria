@@ -317,7 +317,7 @@ namespace Cafeteria.Controllers
                 var authenticationProperties = new AuthenticationProperties
                 {
                     IsPersistent = isPersistent,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10)
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(1)
                 };
 
                 _cartService.Delete();
