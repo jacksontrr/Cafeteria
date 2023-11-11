@@ -22,14 +22,17 @@ namespace Cafeteria.Controllers
     public class ProdutosController : Controller
     {
         private readonly IProdutoService _produtoService;
+        private readonly ICarrinhoService _cart;
 
-        public ProdutosController(IProdutoService produtoService)
+        public ProdutosController(IProdutoService produtoService, ICarrinhoService cart)
         {
             _produtoService = produtoService;
+            _cart = cart;
         }
 
         public async Task<IActionResult> Index()
         {
+            ViewData["CartQuantity"] = _cart.GetCart().Count;
             int? clienteId = null;
             if (User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
             {
@@ -64,7 +67,7 @@ namespace Cafeteria.Controllers
         [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> Details(int? id)
         {
-
+            ViewData["CartQuantity"] = _cart.GetCart().Count;
             var produto = await _produtoService.Get(id.GetValueOrDefault());
 
             if (produto == null)
