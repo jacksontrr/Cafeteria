@@ -1,0 +1,74 @@
+﻿@model Cafeteria.Utilities.Cart
+@{
+    ViewData["Title"] = "Carrinho";
+    int TotalProducts = 0;
+}
+
+<link rel="stylesheet" href="~/css/Carrinho.css" asp-append-version="true" />
+
+
+@if (Model.Items.Count() == 0)
+{
+    <h2>Carrinho</h2>
+    <div class="alert alert-light" role="alert">
+        Seu carrinho está vazio!
+    </div>
+}
+else
+{
+
+    <h2>Seu carrinho de compras</h2>
+    <div class="row">
+        <div class="col-md-6">
+
+            @foreach (var item in Model.Items)
+            {
+                decimal total = item.Product.Preco * item.Quantity;
+                <form asp-action="UpdateProductCart" asp-controller="Carrinho" method="post">
+                    <input type="hidden" class="productId" name="productId" value="@item.Product.Id" />
+                    <div class="card bg-brown mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <img src="~/images/product/@Html.DisplayFor(modelItem => item.Product.Imagem)" class="img-buy" alt="@Html.DisplayFor(modelItem => item.Product.Nome)">
+                                </div>
+                                <div class="col-9">
+                                    <div class="d-flex justify-content-between align-items-center h-100 div-infor">
+                                        <span class="d-flex w-50 justify-content-center align-items-center name">@Html.DisplayFor(modelItem => item.Product.Nome)</span>
+                                        <span class="d-flex w-50 justify-content-center align-items-center price">@Html.DisplayFor(modelItem => item.Product.Preco)</span>
+                                        <div class="input-group justify-content-center align-items-center">
+
+                                            <a class="btn btn-danger quantity-button decrease">@Html.Raw(item.Quantity == 1 ? "<i class='fas fa-trash-alt'></i>" : "-")</a>
+                                            <input type="text" class="quantity" name="quantity" value="@Html.DisplayFor(modelItem => item.Quantity)" data-quantity="@item.Quantity">
+                                            <a class="btn btn-primary quantity-button increase">+</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center h-50 pt-2 div-save d-none">
+                                        <button type="submit" class="btn btn-outline-light w-100">Salvar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                TotalProducts += item.Quantity;
+            }
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-brown">
+                <div class="card-body">
+                    <h5 class="card-title">Resumo do Pedido</h5>
+                    <p class="card-text">Total Itens: <span id="total-quantity">@TotalProducts</span></p>
+                    <p class="card-text">Total Preço: <span id="total-price">R$ @Model.Total.ToString("N2")</span></p>
+                    <a href="#" class="btn btn-outline-light w-100">Comprar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts{
+    <script>
+        let totalProducts = @TotalProducts;
+    </script>
+    <script src="~/js/Carrinho.js" asp-append-version="true"></script>
+}
