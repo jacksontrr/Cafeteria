@@ -12,9 +12,8 @@ namespace Cafeteria.Models
         [Display(Name = "Cliente")]
         public int ClienteId { get; set; }
         
-        [Required]
         [Display(Name = "Administrador")]
-        public int AdministradorId { get; set; }
+        public int? AdministradorId { get; set; }
         
         public string? Status { get; set; }
         
@@ -26,6 +25,6 @@ namespace Cafeteria.Models
         [ForeignKey("AdministradorId")]
         public Administrador? Administrador { get; set; }
 
-        public ICollection<PedidoProduto>? PedidoProdutos { get; set; }
+        public ICollection<PedidoProduto> PedidoProdutos { get; set; }
     }
 }
