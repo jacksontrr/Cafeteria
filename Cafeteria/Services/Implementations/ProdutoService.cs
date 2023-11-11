@@ -33,6 +33,11 @@ namespace Cafeteria.Services.Implementations
 
         public async Task Delete(int id)
         {
+            var produto = await _produtoRepository.Get(id);
+            if(!(produto.Imagem.IndexOf("sem-imagem") > -1))
+            {
+                DeleteFile(produto.Imagem);
+            }
             await _produtoRepository.Delete(id);
         }
 
