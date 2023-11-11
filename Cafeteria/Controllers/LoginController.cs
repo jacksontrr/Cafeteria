@@ -16,10 +16,12 @@ namespace Cafeteria.Controllers
     {
 
         private readonly ILoginService _loginService;
+        private readonly ICarrinhoService _cartService;
 
-        public LoginController(ILoginService loginService)
+        public LoginController(ILoginService loginService, ICarrinhoService cartService)
         {
             _loginService = loginService;
+            _cartService = cartService;
         }
 
         public IActionResult Index()
@@ -228,6 +230,7 @@ namespace Cafeteria.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
+            _cartService.Delete();
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Produtos");
         }
@@ -317,6 +320,7 @@ namespace Cafeteria.Controllers
                     ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10)
                 };
 
+                _cartService.Delete();
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authenticationProperties);
 
