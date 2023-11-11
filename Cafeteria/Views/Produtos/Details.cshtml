@@ -14,61 +14,64 @@
 
 
 
-<div>
 
-    <div class="row">
-        <!-- Imagem do Produto -->
-        <div class="col-md-6">
-            <div class="card bg-brown align-items-center">
-                
-                @if (User.IsInRole("Cliente") || !User.Identity.IsAuthenticated)
-                {
-                    <div class="card-favorite">
-                        <a class="card-btn-favorite" asp-action="Favoritar" asp-route-id="@Model.Id">
-                            <i class="fas fa-heart @(isFavorite ? "text-danger" : "")"></i>
-                        </a>
-                    </div>
-                }
-                <img src="~/images/product/@Html.DisplayFor(model => model.Imagem)" class="img-details  " alt="Café Expresso">
-            </div>
+<div class="row">
+    
+    <!-- Imagem do Produto -->
+    <div class="col-md-6">
+        <div class="card bg-brown align-items-center">
+
+            @if (User.IsInRole("Cliente") || !User.Identity.IsAuthenticated)
+            {
+                <div class="card-favorite">
+                    <a class="card-btn-favorite" asp-action="Favoritar" asp-route-id="@Model.Id">
+                        <i class="fas fa-heart @(isFavorite ? "text-danger" : "")"></i>
+                    </a>
+                </div>
+            }
+            <img src="~/images/product/@Html.DisplayFor(model => model.Imagem)" class="img-details  " alt="Café Expresso">
+        </div>
+    </div>
+
+    <!-- Detalhes do Produto -->
+    <div class="col-md-6 d-flex justify-content-between flex-wrap flex-column mt-2 mt-md-0">
+
+        <h1>@Html.DisplayFor(model => model.Nome)</h1>
+        <div class="description">
+            <p class="text-muted">@Html.DisplayFor(model => model.Descricao)</p>
         </div>
 
-        <!-- Detalhes do Produto -->
-        <div class="col-md-6 d-flex justify-content-between flex-wrap flex-column mt-2 mt-md-0">
+        <div class="price">
+            <h2>@Html.DisplayFor(model => model.Preco)</h2>
+        </div>
 
-            <h1>@Html.DisplayFor(model => model.Nome)</h1>
-            <div class="description">
-                <p class="text-muted">@Html.DisplayFor(model => model.Descricao)</p>
-            </div>
+        @*             <p class="mb-4">@Html.DisplayFor(model => model.Descricao)</p> *@
 
-            <div class="price">
-                <h2>@Html.DisplayFor(model => model.Preco)</h2>
-            </div>
-
-            @*             <p class="mb-4">@Html.DisplayFor(model => model.Descricao)</p> *@
-
-            <!-- Botão Adicionar ao Carrinho -->
-            @* <a asp-action="Index" asp-controller="Produtos" class="btn btn-outline-secondary">Voltar à Lista</a> *@
+        <!-- Botão Adicionar ao Carrinho -->
+        @* <a asp-action="Index" asp-controller="Produtos" class="btn btn-outline-secondary">Voltar à Lista</a> *@
+        <form asp-action="AddToCart" asp-controller="Carrinho">
+            <input type="hidden" id="productId" name="productId" value="@Model.Id" />
             <div class="d-flex justify-content-between">
                 <div class="quantity-container">
                     <div class="input-group">
-                        <button class="btn btn-danger quantity-button" id="decrease">-</button>
-                        <input type="text" id="quantity" value="1">
-                        <button class="btn btn-primary quantity-button" id="increase">+</button>
+                        <a class="btn btn-danger quantity-button" id="decrease">-</a>
+                        <input type="text" id="quantity" name="quantity" value="1">
+                        <a class="btn btn-primary quantity-button" id="increase">+</a>
 
                     </div>
                 </div>
-                <button class="btn btn-success btn-lg">Adicionar ao Carrinho</button>
+                <button class="btn btn-success btn-lg" type="submit">Adicionar ao Carrinho</button>
             </div>
+        </form>
 
 
-            <!-- Links de Ação -->
-            @* <div class="d-flex justify-content-end mt-3">
-            <a href="caminho_para_editar" class="btn btn-outline-secondary">Editar</a>
-            </div> *@
-        </div>
+        <!-- Links de Ação -->
+        @* <div class="d-flex justify-content-end mt-3">
+        <a href="caminho_para_editar" class="btn btn-outline-secondary">Editar</a>
+        </div> *@
     </div>
 </div>
+
 
 @section Scripts {
     <script src="~/js/ProdutosDetalhes.js"></script>
