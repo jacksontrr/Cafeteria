@@ -54,6 +54,7 @@
                                             Carrinho
                                         </a>
                                         <a asp-action="Favoritos" asp-controller="Clientes" class="dropdown-item">Favoritos</a>
+                                        <a asp-action="Index" asp-controller="Pedidos" class="dropdown-item">Pedidos</a>
                                     }
                                     <a asp-action="Configuracao" asp-controller="Login" class="dropdown-item">Configurações</a>
                                     <div class="dropdown-divider"></div>
@@ -125,7 +126,7 @@
             {
                 <a class="navbar-white" asp-controller="Clientes" asp-action="Favoritos"><i class="fas fa-heart"></i></a>
 
-                <a class="navbar-white" asp-area="" asp-controller="Carrinhos" asp-action="Index"><i class="fas fa-receipt"></i></a>
+                <a class="navbar-white" asp-area="" asp-controller="Pedidos" asp-action="Index"><i class="fas fa-receipt"></i></a>
 
                 <a class="navbar-white" asp-area="" asp-controller="Notificacoes" asp-action="Index"><i class="fas fa-bell"></i></a>
             }
@@ -138,11 +139,6 @@
                         <i class="fas fa-user"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-top dropdown" aria-labelledby="navbarDownDropdown">
-                        <a class="dropdown-item" href="#">Perfil</a>
-                        @if (User.IsInRole("Cliente"))
-                        {
-                            <a asp-action="Favoritos" asp-controller="Clientes" class="dropdown-item">Favoritos</a>
-                        }
                         <a asp-action="Configuracao" asp-controller="Login" class="dropdown-item">Configurações</a>
                         <div class="dropdown-divider"></div>
                         <a asp-action="Logout" asp-controller="Login" class="dropdown-item">Sair</a>
