@@ -90,6 +90,11 @@
 
         CalculaTotal();
     });
+
+    $("#modal-buy").click(function () {
+        FormaPagamentoModal();
+    })
+
     let CalculaTotal = function () {
         let total = 0;
         let totalQuantidade = 0;
@@ -106,6 +111,71 @@
         $("#total-quantity").html(totalQuantidade);
     }
 
+    var FormaPagamentoModal = function () {
+        $("#modal #modalLabel").html("Forma de Pagamento");
+        let html = '<div class="row">';
+        html += '<div class="col-12">';
+        html += '<div class="card">';
+        html += '<div class="card-body">';
+        html += '<div class="row">';
+        html += '<div class="col-12">';
+        html += '<div class="form-check">';
+        html += '<input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="Dinheiro" checked>';
+        html += '<label class="form-check-label" for="flexRadioDefault1">';
+        html += 'Dinheiro';
+        html += '</label>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="col-12">';
+        html += '<div class="form-check">';
+        html += '<input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="Cartão de Crédito">';
+        html += '<label class="form-check-label" for="flexRadioDefault2">';
+        html += 'Cartão de Crédito';
+        html += '</label>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="col-12">';
+        html += '<div class="form-check">';
+        html += '<input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3" value="Cartão de Débito">';
+        html += '<label class="form-check-label" for="flexRadioDefault3">';
+        html += 'Cartão de Débito';
+        html += '</label>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="col-12">';
+        html += '<div class="form-check">';
+        html += '<input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault4" value="Pix">';
+        html += '<label class="form-check-label" for="flexRadioDefault4">';
+        html += 'Pix';
+        html += '</label>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        $("#modal .modal-body").html(html);
+
+        $("#modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary btn-finalizar">Finalizar</button>')
+
+        $("#modal").modal("show");
+
+        $(".btn-finalizar").click(function () {
+            console.log($("input[name='flexRadioDefault']:checked").val())
+            $.ajax({
+                url: "/Pedidos/Solicit",
+                type: "POST",
+                data: {
+                    formaPagamento: $("input[name='flexRadioDefault']:checked").val()
+                }
+            }).done(function (data) {
+                window.location.href = "/Pedidos";
+            });
+        });
+
+    }
 
 });
 
