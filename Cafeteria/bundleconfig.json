@@ -2,6 +2,28 @@
 // More info at https://go.microsoft.com/fwlink/?LinkId=808241
 [
   {
+    "outputFileName": "wwwroot/css/PedidoList.min.css",
+    "inputFiles": [
+      "wwwroot/css/PedidoList.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/PedidoList.min.js",
+    "inputFiles": [
+      "wwwroot/js/PedidoList.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
     "outputFileName": "wwwroot/css/Pedido.min.css",
     "inputFiles": [
       "wwwroot/css/Pedido.css"
