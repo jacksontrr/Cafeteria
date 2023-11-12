@@ -68,5 +68,31 @@ namespace Cafeteria.Controllers
             return RedirectToAction("Index", "Pedidos");
         }
 
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> ListPending()
+        {
+            var pedidos = await _pedidoService.GetAll(null);
+            return View(pedidos);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Finish(int id)
+        {
+            try
+            {
+                if(id == 0)
+                {
+                    return Json(new { success = false });
+                }
+                var pedido = await _pedidoService.Get(id);
+                pedido.Status = "Finalizado";
+                await _pedidoService.Update(id, pedido);
+                return Json(new { success = true });
+            }
+            catch (Exception e)
+            {
+                return Json(new { success = false });
+            }
+        }
     }
 }

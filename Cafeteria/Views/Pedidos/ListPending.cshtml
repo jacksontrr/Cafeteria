@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Cafeteria.Models.Pedido>
+@{
+    ViewData["Title"] = "Pedidos dos Clientes";
+}
+
+<link rel="stylesheet" href="~/css/PedidoList.css" asp-append-version="true" />
+
+<h1 class="d-flex d-md-block justify-content-center align-items-center">Pedidos dos Clientes</h1>
+
+@if (Model.Where(x => x.Status == "Pendente").ToList().Count == 0)
+{
+    <h3 class="d-flex d-md-block justify-content-center align-items-center">Não há pedidos pendentes</h3>
+
+}
+
+@foreach (var (item, index) in Model.Select((value, i) => (value, i)).Where(x => x.value.Status == "Pendente"))
+{
+    <div class="d-flex gap-2 mb-2 div-infor">
+        <input type="hidden" class="pedidoId" value="@item.Id" />
+        <h3>Pedido #@(index + 1) - @item.Cliente.Nome</h3>
+        <button class="btn btn-success finish">Finalizar</button>
+    </div>
+    <div class="row">
+
+        @foreach (var produto in item.PedidoProdutos)
+        {
+            <div class="col-12 col-md-4">
+                <div class="card bg-brown mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-3">
+                                <img src="~/images/product/@Html.DisplayFor(modelItem => produto.Produto.Imagem)" class="card-img-product" alt="@Html.DisplayFor(modelItem => produto.Produto.Nome)">
+                            </div>
+                            <div class="col-9">
+                                <div class="d-flex justify-content-between align-items-center h-100 ">
+                                    <span class="d-flex justify-content-center align-items-center">@Html.DisplayFor(modelItem => produto.Produto.Nome)</span>
+                                    <span class="d-flex justify-content-center align-items-center">@Html.DisplayFor(modelItem => produto.Produto.Preco)</span>
+                                    <span class="justify-content-center align-items-center">Q:@Html.DisplayFor(modelItem => produto.Quantidade)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/PedidoList.js" asp-append-version="true"></script>
+}
