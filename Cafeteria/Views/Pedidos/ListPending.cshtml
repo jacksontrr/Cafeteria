@@ -1,28 +1,29 @@
 ﻿@model IEnumerable<Cafeteria.Models.Pedido>
 @{
     ViewData["Title"] = "Pedidos dos Clientes";
+    List<Cafeteria.Models.Pedido> pedidosPendete = Model.Where(x => x.Status == "Pendente").ToList();
 }
 
 <link rel="stylesheet" href="~/css/PedidoList.css" asp-append-version="true" />
 
 <h1 class="d-flex d-md-block justify-content-center align-items-center">Pedidos dos Clientes</h1>
 
-@if (Model.Where(x => x.Status == "Pendente").ToList().Count == 0)
+@if (pedidosPendete.Count == 0)
 {
     <h3 class="d-flex d-md-block justify-content-center align-items-center">Não há pedidos pendentes</h3>
 
 }
 
-@for (int i = 0; i < Model.Where(x => x.Status == "Pendente").Count(); i++)
+@for (int i = 0; i < pedidosPendete.Count; i++)
 {
     <div class="d-flex gap-2 mb-2 div-infor">
-        <input type="hidden" class="pedidoId" value="@Model.ToList()[i].Id" />
-        <h3>Pedido #@(i + 1) - @Model.ToList()[i].Cliente.Nome</h3>
+        <input type="hidden" class="pedidoId" value="@pedidosPendete[i].Id" />
+        <h3>Pedido #@(i + 1) - @pedidosPendete[i].Cliente.Nome</h3>
         <button class="btn btn-success finish">Finalizar</button>
     </div>
     <div class="row">
 
-        @foreach (var produto in Model.ToList()[i].PedidoProdutos)
+        @foreach (var produto in pedidosPendete[i].PedidoProdutos)
         {
             <div class="col-12 col-md-4">
                 <div class="card bg-brown mb-3">
