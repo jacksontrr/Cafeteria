@@ -13,16 +13,16 @@
 
 }
 
-@foreach (var (item, index) in Model.Select((value, i) => (value, i)).Where(x => x.value.Status == "Pendente"))
+@for (int i = 0; i < Model.Where(x => x.Status == "Pendente").Count(); i++)
 {
     <div class="d-flex gap-2 mb-2 div-infor">
-        <input type="hidden" class="pedidoId" value="@item.Id" />
-        <h3>Pedido #@(index + 1) - @item.Cliente.Nome</h3>
+        <input type="hidden" class="pedidoId" value="@Model.ToList()[i].Id" />
+        <h3>Pedido #@(i + 1) - @Model.ToList()[i].Cliente.Nome</h3>
         <button class="btn btn-success finish">Finalizar</button>
     </div>
     <div class="row">
 
-        @foreach (var produto in item.PedidoProdutos)
+        @foreach (var produto in Model.ToList()[i].PedidoProdutos)
         {
             <div class="col-12 col-md-4">
                 <div class="card bg-brown mb-3">

@@ -5,11 +5,11 @@
 <link rel="stylesheet" href="~/css/Pedido.css" asp-append-version="true" />
 
 <h2 class="d-flex d-md-block justify-content-center align-items-center">Pedidos</h2>
-@foreach (var (item, index) in Model.Select((value, i) => (value, i)))
+@for (int i = 0; i < Model.Count(); i++)
 {
-    <h3># @(index + 1) - @Html.DisplayFor(modelItem => item.Status)</h3>
+    <h3># @(i + 1) - @Html.DisplayFor(modelItem => Model.ToList()[i].Status)</h3>
     <div class="row">
-        @foreach (var item2 in item.PedidoProdutos.ToList())
+        @foreach (var item2 in Model.ToList()[i].PedidoProdutos.ToList())
         {
             <div class="col-12 col-md-4">
                 <div class="card bg-brown mb-3">
