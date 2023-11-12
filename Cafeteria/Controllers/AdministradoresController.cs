@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Cafeteria.Data;
 using Cafeteria.Models;
 using Microsoft.AspNetCore.Authorization;
 using Cafeteria.Services.Interfaces;
-using Cafeteria.Services.Implementations;
+using Cafeteria.ViewModels;
+using Cafeteria.Utilities;
 
 namespace Cafeteria.Controllers
 {
@@ -17,10 +16,12 @@ namespace Cafeteria.Controllers
     public class AdministradoresController : Controller
     {
         private readonly IAdministradorService _administradorService;
+        private readonly ILoginService _loginService;
 
-        public AdministradoresController(IAdministradorService administradorService)
+        public AdministradoresController(IAdministradorService administradorService, ILoginService loginService)
         {
             _administradorService = administradorService;
+            _loginService = loginService;
         }
 
         public async Task<IActionResult> Index()
@@ -28,50 +29,65 @@ namespace Cafeteria.Controllers
             return View(await _administradorService.GetAll());
         }
 
-        public IActionResult Create()
+        public IActionResult Cadastrar()
         {
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Administrador administrador)
+        public async Task<IActionResult> Cadastrar(UsuarioSalvaViewModel usuario)
         {
             if (ModelState.IsValid)
             {
-                var verificar = await _administradorService.GetEmail(administrador.Email);
-                if(verificar != null)
+                if (usuario.Senha != usuario.ConfirmacaoSenha)
+                {
+                    ModelState.AddModelError("Senha", "Senhas não conferem");
+                    ModelState.AddModelError("ConfirmacaoSenha", "Senhas não conferem");
+                    return View(usuario);
+                }
+                var verificarAdministrador = await _loginService.GetEmailAdministrador(usuario.Email);
+                var verificarCliente = await _loginService.GetEmailCliente(usuario.Email);
+                if (verificarAdministrador != null || verificarCliente != null)
                 {
                     ModelState.AddModelError("Email", "Email já cadastrado");
-                    return View(administrador);
+                    return View(usuario);
                 }
+
+                var administrador = new Administrador
+                {
+                    Email = usuario.Email,
+                    Nome = usuario.Nome,
+                    Senha = PasswordUtilities.PasswordHash(usuario.Senha),
+                };
+
                 await _administradorService.Add(administrador);
                 return RedirectToAction(nameof(Index));
             }
-            return View(administrador);
+            return View(usuario);
         }
 
-        // GET: Administradores/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Editar(int? id)
         {
-
             var administrador = await _administradorService.Get(id.GetValueOrDefault());
-            if (id == null || administrador == null)
+            if (administrador == null)
             {
                 return NotFound();
             }
-
-            return View(administrador);
+            var usuario = new UsuarioSalvaViewModel
+            {
+                Id = administrador.Id,
+                Nome = administrador.Nome,
+                Email = administrador.Email
+            };
+            return View(usuario);
         }
 
-        // POST: Administradores/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Administrador administrador)
+        public async Task<IActionResult> Editar(int id, UsuarioSalvaViewModel usuario)
         {
-            if (id != administrador.Id)
+            if (id != usuario.Id)
             {
                 return NotFound();
             }
@@ -80,7 +96,17 @@ namespace Cafeteria.Controllers
             {
                 try
                 {
-                    // _context.Update(administrador);
+                    if (usuario.Senha != usuario.ConfirmacaoSenha)
+                    {
+                        ModelState.AddModelError("Senha", "Senhas não conferem");
+                        ModelState.AddModelError("ConfirmacaoSenha", "Senhas não conferem");
+                        return View(usuario);
+                    }
+                    var administrador = await _administradorService.Get(id);
+                    administrador.Nome = usuario.Nome;
+                    administrador.Email = usuario.Email;
+                    administrador.Senha = PasswordUtilities.PasswordHash(usuario.Senha);
+                    await _administradorService.Update(id, administrador);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -95,15 +121,14 @@ namespace Cafeteria.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(administrador);
+            return View(usuario);
         }
 
-        // GET: Administradores/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Deletar(int? id)
         {
-            // delete
+
             var administrador = await _administradorService.Get(id.GetValueOrDefault());
-            if (administrador == null || id == null)
+            if (administrador == null)
             {
                 return NotFound();
             }
@@ -111,12 +136,11 @@ namespace Cafeteria.Controllers
             return View(administrador);
         }
 
-        // POST: Administradores/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Deletar")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            
+
             var administrador = await _administradorService.Get(id);
             if (administrador != null)
             {

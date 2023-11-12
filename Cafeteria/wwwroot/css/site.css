@@ -164,3 +164,18 @@ body {
 .background-color-transparent {
     background-color: transparent !important;
 }
+
+.title-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Mobile */
+
+@media (min-width: 768px) {
+    .title-center {
+        display: block !important;
+    }
+}
