@@ -21,7 +21,14 @@
     <header>
         <nav class="navbar navbar-expand-sm  border-bottom box-shadow mb-3 navbar-brown d-none d-md-block">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="/" asp-action="">Cafeteria</a>
+                @if (User.IsInRole("Administrador"))
+                {
+                    <a class="navbar-brand" asp-controller="Pedidos" asp-action="ListPending">Cafeteria</a>
+                }
+                else
+                {
+                    <a class="navbar-brand" asp-area="" asp-controller="/" asp-action="">Cafeteria</a>
+                }
 
                 <div class="d-flex">
                     <ul class="navbar-nav ml-auto">
@@ -119,8 +126,15 @@
     </div>
     <nav class="navbar fixed-bottom navbar-light bg-brown border-bottom box-shadow navbar-brown d-md-none d-block">
         <div class="container-fluid justify-content-around">
+            @if (User.IsInRole("Administrador"))
+            {
+                <a class="navbar-white" asp-area="" asp-controller="Pedidos" asp-action="ListPending"><i class="fas fa-home"></i></a>
+            }
+            else
+            {
+                <a class="navbar-white" asp-area="" asp-controller="/" asp-action="Index"><i class="fas fa-home"></i></a>
+            }
 
-            <a class="navbar-white" asp-area="" asp-controller="/" asp-action="Index"><i class="fas fa-home"></i></a>
 
             @if (User.IsInRole("Cliente"))
             {

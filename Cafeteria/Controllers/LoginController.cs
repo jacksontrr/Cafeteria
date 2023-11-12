@@ -30,7 +30,7 @@ namespace Cafeteria.Controllers
 
             if (User.IsInRole("Administrador"))
             {
-                return RedirectToAction("Index", "Administradores");
+                return RedirectToAction("ListPending", "Pedidos");
             }
 
             if (User.IsInRole("Cliente"))
@@ -47,7 +47,7 @@ namespace Cafeteria.Controllers
 
             if (User.IsInRole("Administrador"))
             {
-                return RedirectToAction("Index", "Administradores");
+                return RedirectToAction("ListPending", "Pedidos");
             }
 
             if (User.IsInRole("Cliente"))
@@ -217,7 +217,7 @@ namespace Cafeteria.Controllers
                 if (administrador != null)
                 {
                     await SignInAsync(new UsuarioViewModel(administrador), true, true);
-                    return RedirectToAction("Index", "Administradores");
+                    return RedirectToAction("ListPending", "Pedidos");
                 }
 
                 ModelState.AddModelError("Email", "Email ou senha incorretos");
