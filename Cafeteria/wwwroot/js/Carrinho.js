@@ -161,9 +161,34 @@
         $("#modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary btn-finalizar">Finalizar</button>')
 
         $("#modal").modal("show");
+        
+        const socket = new WebSocket('wss://' + window.location.host + "/ws");
+        //var socket = new WebSocket("ws://localhost:5000/ws");
+        socket.onopen = function (e) {
+            console.log("[open] Connection established", e);
+        };
+
+        socket.onmessage = function (event) {
+            console.log(`[message] Data received from server: ${event.data}`);
+        };
+
+        socket.onclose = function (event) {
+            console.log(event)
+            if (event.wasClean) {
+                console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+            } else {
+                alert('[close] Connection died');
+            }
+        };
+
+        socket.onerror = function (error) {
+            console.log(`[error] ${error.message}`);
+        };
+
 
         $(".btn-finalizar").click(function () {
             console.log($("input[name='flexRadioDefault']:checked").val())
+            
             $.ajax({
                 url: "/Pedidos/Solicit",
                 type: "POST",
@@ -171,6 +196,8 @@
                     formaPagamento: $("input[name='flexRadioDefault']:checked").val()
                 }
             }).done(function (data) {
+                socket.send("Atualizar");
+                socket.close();
                 window.location.href = "/Pedidos";
             });
         });
