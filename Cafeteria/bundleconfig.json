@@ -2,6 +2,94 @@
 // More info at https://go.microsoft.com/fwlink/?LinkId=808241
 [
   {
+    "outputFileName": "wwwroot/css/ClientesEditar.min.css",
+    "inputFiles": [
+      "wwwroot/css/ClientesEditar.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ClientesEditar.min.js",
+    "inputFiles": [
+      "wwwroot/js/ClientesEditar.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ClientesDeletar.min.css",
+    "inputFiles": [
+      "wwwroot/css/ClientesDeletar.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ClientesDeletar.min.js",
+    "inputFiles": [
+      "wwwroot/js/ClientesDeletar.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ClientesDetalhes.min.css",
+    "inputFiles": [
+      "wwwroot/css/ClientesDetalhes.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ClientesDetalhes.min.js",
+    "inputFiles": [
+      "wwwroot/js/ClientesDetalhes.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ClientesCadastrar.min.css",
+    "inputFiles": [
+      "wwwroot/css/ClientesCadastrar.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ClientesCadastrar.min.js",
+    "inputFiles": [
+      "wwwroot/js/ClientesCadastrar.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
     "outputFileName": "wwwroot/css/PedidoList.min.css",
     "inputFiles": [
       "wwwroot/css/PedidoList.css"
