@@ -1,0 +1,144 @@
+﻿@model Cafeteria.Models.Cliente
+
+@{
+    ViewData["Title"] = "Detalhes";
+}
+<link rel="stylesheet" href="~/css/ClienteDetalhes.css" asp-append-version="true" />
+
+<h1 class="title-center">Cliente - @Model.Nome</h1>
+<hr />
+
+<div class="row">
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+    </dl>
+</div>
+
+<h1 class="title-center">Pedidos - Total: @Model.Pedidos.Count</h1>
+<hr />
+<div class="row">
+    <h4> Pedidos Pendentes </h4>
+    @if (Model.Pedidos.Where(x => x.Status == "Pendente").ToList().Count == 0)
+    {
+        <p>Não há pedidos pendentes.</p>
+    }
+    @{
+        int count = 0;
+    }
+    @foreach (var item in Model.Pedidos)
+    {
+        if (item.Status == "Pendente")
+        {
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <p class="card-text">Pedido: @(++count)</p>
+                        <div class="d-flex mb-3">
+                            @foreach (var item2 in item.PedidoProdutos)
+                            {
+                                <span class="card-text">@item2.Produto.Nome</span>
+                            }
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a asp-action="PedidosDetalhes" asp-controller="Clientes" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div class="row">
+    <h4> Pedidos Finalizados </h4>
+    @{
+        count = 0;
+    }
+    @foreach (var item in Model.Pedidos)
+    {
+        if (item.Status == "Finalizado")
+        {
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <p class="card-text">Pedido: @(++count)</p>
+                        <div class="d-flex mb-3">
+                            @foreach (var item2 in item.PedidoProdutos)
+                            {
+                                <span class="card-text">@item2.Produto.Nome</span>
+                            }
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a asp-action="PedidosDetalhes" asp-controller="Clientes" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<h1 class="title-center">Produto Favorito - Total: @Model.Favoritos.Count</h1>
+<hr />
+
+<div class="row">
+    @{
+        count = 0;
+    }
+    @* Montar o produto favorito do cliente Montar como se fosse um card do principal produto*@
+    @foreach (var item in Model.Favoritos)
+    {
+        <div class="col-md-3 col-6">
+            <div class="card card-rounder mb-4 shadow bg-brown card-rounder" produtoId="@item.Produto.Id">
+                <div class="card-img mt-3">
+                    <img src="~/images/product/@Html.DisplayFor(modelItem => item.Produto.Imagem)" class="card-img-top card-img-product" alt="@Html.DisplayFor(modelItem => item.Produto.Nome)">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Produto.Nome)</h5>
+                    <p class="card-text">@Html.DisplayFor(modelItem => item.Produto.Preco)</p>
+                    <p class="card-text">@Html.DisplayFor(modelItem => item.Produto.Descricao)</p>
+                    <div class="d-flex justify-content-center">
+                        <a class="btn btn-brown">Detalhes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* <div class="col-md-4">
+    <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+    <p class="card-text">Produto: @(++count)</p>
+    <div class="d-flex mb-3">
+    <span class="card-text">@item.Produto.Nome</span>
+    </div>
+    <div class="d-flex justify-content-between align-items-center">
+    <div class="btn-group">
+    <a asp-action="ProdutosDetalhes" asp-controller="Clientes" asp-route-id="@item.Produto.Id" class="btn btn-sm btn-outline-secondary">Detalhes</a>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div> *@
+    }
+</div>
+<div>
+    <a asp-action="ListarClientes" class="btn btn-light">Voltar</a>
+</div>
+
+@section Scripts {
+    <script src="~/js/ClientesDetalhes.js"></script>
+    }

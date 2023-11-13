@@ -1,16 +1,14 @@
-﻿@model Cafeteria.Models.Cliente
+﻿@model Cafeteria.ViewModels.UsuarioSalvaViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Editar";
 }
 
-<h1>Create</h1>
+<h1 class="title-center">Cliente - @Model.Nome</h1>
 
-<h4>Usuario</h4>
-<hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Editar">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Nome" class="control-label"></label>
@@ -28,16 +26,18 @@
                 <span asp-validation-for="Senha" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="ConfirmacaoSenha" class="control-label"></label>
+                <input asp-for="ConfirmacaoSenha" class="form-control" />
+                <span asp-validation-for="ConfirmacaoSenha" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2 justify-content-between d-flex">
+                <a asp-action="ListarClientes" class="btn btn-light d-none d-md-block">Voltar</a>
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    <script src="~/js/Usuarios.js"></script>
+    <script src="~/js/ClientesEditar.js"></script>
 }
