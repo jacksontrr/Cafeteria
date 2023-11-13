@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Cafeteria.Models.Pedido>
 @{
     ViewData["Title"] = "Pedidos dos Clientes";
-    List<Cafeteria.Models.Pedido> pedidosPendete = Model.Where(x => x.Status == "Pendente").ToList();
+    List<Cafeteria.Models.Pedido> pedidosPendete = Model.Where(x => x.Status == "Pendente" || x.Status == "Em Preparo").ToList();
 }
 
 <link rel="stylesheet" href="~/css/PedidoList.css" asp-append-version="true" />
@@ -19,7 +19,7 @@
     <div class="d-flex gap-2 mb-2 div-infor">
         <input type="hidden" class="pedidoId" value="@pedidosPendete[i].Id" />
         <h3>Pedido #@(i + 1) - @pedidosPendete[i].Cliente.Nome</h3>
-        <button class="btn btn-success finish">Finalizar</button>
+        <button class="btn btn-success @(pedidosPendete[i].Status == "Pendente" ? "in-preparation" : "finish")">@(pedidosPendete[i].Status == "Pendente" ? "Preparar" : "Finalizar")</button>
     </div>
     <div class="row">
 
