@@ -148,5 +148,17 @@ namespace Cafeteria.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> Pesquisar(string nome)
+        {
+            ViewBag.CurrentFilter = nome;
+            if (nome == null)
+            {
+                return RedirectToAction("Index");
+            }
+            var administradores = await _administradorService.GetNome(nome);
+            
+            return View(nameof(Index), administradores);
+        }
     }
 }
