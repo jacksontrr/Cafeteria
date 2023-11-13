@@ -92,6 +92,10 @@ namespace Cafeteria.Services.Implementations
             return _clienteRepository.Exists(id);
         }
 
+        public async Task<Cliente> GetEmail(string email)
+        {
+            return await _clienteRepository.GetEmail(email);
+        }
 
     }
 }
