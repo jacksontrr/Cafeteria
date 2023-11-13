@@ -16,12 +16,12 @@ namespace Cafeteria.Controllers
     public class AdministradoresController : Controller
     {
         private readonly IAdministradorService _administradorService;
-        private readonly ILoginService _loginService;
+        private readonly IClienteService _clienteService;
 
-        public AdministradoresController(IAdministradorService administradorService, ILoginService loginService)
+        public AdministradoresController(IAdministradorService administradorService, IClienteService clienteService)
         {
             _administradorService = administradorService;
-            _loginService = loginService;
+            _clienteService = clienteService;
         }
 
         public async Task<IActionResult> Index()
@@ -46,8 +46,8 @@ namespace Cafeteria.Controllers
                     ModelState.AddModelError("ConfirmacaoSenha", "Senhas não conferem");
                     return View(usuario);
                 }
-                var verificarAdministrador = await _loginService.GetEmailAdministrador(usuario.Email);
-                var verificarCliente = await _loginService.GetEmailCliente(usuario.Email);
+                var verificarAdministrador = await _administradorService.GetEmail(usuario.Email);
+                var verificarCliente = await _clienteService.GetEmail(usuario.Email);
                 if (verificarAdministrador != null || verificarCliente != null)
                 {
                     ModelState.AddModelError("Email", "Email já cadastrado");
