@@ -13,6 +13,7 @@ namespace Cafeteria.Models
         public string Senha { get; set; }
 
         public ICollection<Pedido>? Pedidos { get; set; }
+        public ICollection<Favorito>? Favoritos { get; set; }
 
     }
 }

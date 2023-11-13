@@ -86,7 +86,7 @@ namespace Cafeteria.Data.Implementations
 
         public async Task<Cliente> Get(int id)
         {
-            return await _context.Clientes.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Clientes.Include(f => f.Favoritos).Include(p => p.Pedidos).ThenInclude(pp => pp.PedidoProdutos).ThenInclude(p => p.Produto).FirstOrDefaultAsync(x => x.Id == id); 
         }
         public async Task<Cliente> GetIdEmail(int id, string email)
         {
