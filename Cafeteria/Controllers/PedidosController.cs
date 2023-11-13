@@ -75,6 +75,7 @@ namespace Cafeteria.Controllers
             return View(pedidos);
         }
 
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public async Task<IActionResult> Finish(int id)
         {
@@ -86,6 +87,28 @@ namespace Cafeteria.Controllers
                 }
                 var pedido = await _pedidoService.Get(id);
                 pedido.Status = "Finalizado";
+                await _pedidoService.Update(id, pedido);
+                return Json(new { success = true });
+            }
+            catch (Exception e)
+            {
+                return Json(new { success = false });
+            }
+        }
+
+        [Authorize(Roles = "Administrador")]
+        [HttpPost]
+        public async Task<IActionResult> InPreparation(int id)
+        {
+            try
+            {
+                if (id == 0)
+                {
+                    return Json(new { success = false });
+                }
+                var pedido = await _pedidoService.Get(id);
+                pedido.AdministradorId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+                pedido.Status = "Em Preparo";
                 await _pedidoService.Update(id, pedido);
                 return Json(new { success = true });
             }
