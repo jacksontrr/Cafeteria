@@ -65,9 +65,9 @@
                                     }
                                     @if (User.IsInRole("Administrador"))
                                     {
-                                        <a asp-action="Create" asp-controller="Administradores" class="dropdown-item"> Cadastrar Administradores </a>
+                                        <a asp-action="Cadastrar" asp-controller="Produtos" class="dropdown-item"> Cadastrar Produtos </a>
                                         <a asp-action="Index" asp-controller="Administradores" class="dropdown-item"> Listar Administradores </a>
-                                        <a asp-action="List" asp-controller="Clientes" class="dropdown-item"> Listar Clientes </a>
+                                        <a asp-action="ListarClientes" asp-controller="Clientes" class="dropdown-item"> Listar Clientes </a>
                                     }
                                     <a asp-action="Configuracao" asp-controller="Login" class="dropdown-item">Configurações</a>
                                     <div class="dropdown-divider"></div>
@@ -151,8 +151,9 @@
                 <a class="navbar-white" asp-area="" asp-controller="Notificacoes" asp-action="Index"><i class="fas fa-bell"></i></a>
             }
 
-            @if(User.IsInRole("Administrador"))
+            @if (User.IsInRole("Administrador"))
             {
+                <a class="navbar-white" asp-area="" asp-controller="Produtos" asp-action="Cadastrar"><i class="fas fa-pencil"></i></a>
                 <a class="navbar-white" asp-area="" asp-controller="Administradores" asp-action="Cadastrar"><i class="fas fa-user-plus"></i></a>
             }
 
@@ -166,9 +167,9 @@
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-top dropdown" aria-labelledby="navbarDownDropdown">
                         @if (User.IsInRole("Administrador"))
                         {
-                            
+
                             <a asp-action="Index" asp-controller="Administradores" class="dropdown-item"> Listar Administradores </a>
-                            <a asp-action="List" asp-controller="Clientes" class="dropdown-item"> Listar Clientes </a>
+                            <a asp-action="ListarClientes" asp-controller="Clientes" class="dropdown-item"> Listar Clientes </a>
                         }
                         <a asp-action="Configuracao" asp-controller="Login" class="dropdown-item">Configurações</a>
                         <div class="dropdown-divider"></div>
