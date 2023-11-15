@@ -33,6 +33,11 @@ namespace Cafeteria.Services.Implementations
 
         public async Task Delete(int id)
         {
+            var produto = await _produtoRepository.Get(id);
+            if(!(produto.Imagem.IndexOf("sem-imagem") > -1))
+            {
+                DeleteFile(produto.Imagem);
+            }
             await _produtoRepository.Delete(id);
         }
 
@@ -58,7 +63,7 @@ namespace Cafeteria.Services.Implementations
             return await _produtoRepository.GetNome(nome);
         }
 
-        public bool SaveFile(ref ProdutoViewModel produtoViewModel)
+        public async Task<(bool error, ProdutoViewModel produtoViewModel)> SaveFile(ProdutoViewModel produtoViewModel)
         {
             bool error = false;
             if (produtoViewModel.Arquivo != null && produtoViewModel.Arquivo.Length > 0)
@@ -67,7 +72,7 @@ namespace Cafeteria.Services.Implementations
                 if (!produtoViewModel.Arquivo.ContentType.Contains("image"))
                 {
                     error = true;
-                    return error;
+                    return (error, produtoViewModel);
                 }
 
                 // Defina o diretório de destino para salvar o arquivo
@@ -85,15 +90,24 @@ namespace Cafeteria.Services.Implementations
                 // Salve o arquivo
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    produtoViewModel.Arquivo.CopyToAsync(stream);
+                    await produtoViewModel.Arquivo.CopyToAsync(stream);
                 }
+
                 produtoViewModel.Imagem = fileName;
             }
-            return error;
+            else
+            {
+                produtoViewModel.Imagem = "sem-imagem.png";
+            }
+            return (error, produtoViewModel);
         }
 
         public void DeleteFile(string? fileName)
         {
+            if(fileName == "sem-imagem.png")
+            {
+                return;
+            }
             var caminhoDoArquivo = Path.Combine(_webHostEnvironment.WebRootPath, "images\\product", fileName);
             if (System.IO.File.Exists(caminhoDoArquivo))
             {

@@ -15,5 +15,6 @@ namespace Cafeteria.Services.Interfaces
         Task<IEnumerable<Favorito>> GetClienteAll(int clienteId);
         Task DeleteFavorito(int id);
         Task<Favorito> GetFavoritoById(int id);
+        Task<Cliente> GetEmail(string email);
     }
 }

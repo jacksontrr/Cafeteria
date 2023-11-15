@@ -14,21 +14,25 @@ using System.Globalization;
 using System.Text;
 using Cafeteria.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
+using Cafeteria.Utilities;
 
 namespace Cafeteria.Controllers
 {
     public class ProdutosController : Controller
     {
         private readonly IProdutoService _produtoService;
+        private readonly ICarrinhoService _cart;
 
-        public ProdutosController(IProdutoService produtoService)
+        public ProdutosController(IProdutoService produtoService, ICarrinhoService cart)
         {
             _produtoService = produtoService;
+            _cart = cart;
         }
 
-        // GET: Produtos
         public async Task<IActionResult> Index()
         {
+            ViewData["CartQuantity"] = _cart.GetCart().Count;
             int? clienteId = null;
             if (User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
             {
@@ -53,18 +57,20 @@ namespace Cafeteria.Controllers
                 {
                     return RedirectToAction("Index");
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 return Problem(e.Message);
             }
         }
 
-        // GET: Produtos/Details/5
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> Details(int? id)
         {
+            ViewData["CartQuantity"] = _cart.GetCart().Count;
             var produto = await _produtoService.Get(id.GetValueOrDefault());
 
-            if (id == null || produto == null)
+            if (produto == null)
             {
                 return NotFound();
             }
@@ -72,29 +78,66 @@ namespace Cafeteria.Controllers
             return View(produto);
         }
 
-        // GET: Produtos/Create
-        public IActionResult Create()
+        [Authorize(Roles = "Cliente")]
+        public async Task<IActionResult> Favoritar(int id)
+        {
+            string url = "";
+            try
+            {
+                int clienteId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+                var produto = await _produtoService.Get(id);
+                if (produto != null)
+                {
+                    var favorito = new Favorito
+                    {
+                        ClienteId = clienteId,
+                        ProdutoId = id
+                    };
+
+                    var encontrado = await _produtoService.GetFavorito(favorito);
+                    if (encontrado != null)
+                    {
+                        await _produtoService.DeleteFavorite(encontrado.Id);
+                        url = Request.Cookies["LastRequest"];
+
+                        return Redirect(url);
+                    }
+                    await _produtoService.SaveFavorite(favorito);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception e)
+            {
+                return Problem(e.Message);
+            }
+            url = Request.Cookies["LastRequest"];
+            return Redirect(url);
+        }
+
+        [Authorize(Roles = "Administrador")]
+        public IActionResult Cadastrar()
         {
             return View();
         }
 
-        // POST: Produtos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProdutoViewModel produtoViewModel)
+        public async Task<IActionResult> Cadastrar(ProdutoViewModel produtoViewModel)
         {
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    bool error = _produtoService.SaveFile(ref produtoViewModel);
+                    (bool error, produtoViewModel) = await _produtoService.SaveFile(produtoViewModel);
                     if (error)
                     {
                         ModelState.AddModelError("Arquivo", "Por favor, envie uma imagem.");
-                        return View("Create", produtoViewModel);
+                        return View("Cadastrar", produtoViewModel);
                     }
                     Produto produto = new Produto
                     {
@@ -104,19 +147,19 @@ namespace Cafeteria.Controllers
                         Imagem = produtoViewModel.Imagem
                     };
                     await _produtoService.Add(produto);
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(ListarProdutos));
                 }
                 catch (Exception e)
                 {
                     ModelState.AddModelError("Arquivo", e.Message);
-                    return View("Create", produtoViewModel);
+                    return View("Cadastrar", produtoViewModel);
                 }
             }
             return View(produtoViewModel);
         }
 
-        // GET: Produtos/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Editar(int? id)
         {
             var produto = await _produtoService.Get(id.GetValueOrDefault());
 
@@ -137,12 +180,10 @@ namespace Cafeteria.Controllers
             return View(produtoViewModel);
         }
 
-        // POST: Produtos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ProdutoViewModel produtoViewModel)
+        public async Task<IActionResult> Editar(int id, ProdutoViewModel produtoViewModel)
         {
             Produto produto = await _produtoService.Get(id);
 
@@ -154,25 +195,28 @@ namespace Cafeteria.Controllers
             {
                 try
                 {
-                    _produtoService.DeleteFile(produto.Imagem);
-                    bool error = _produtoService.SaveFile(ref produtoViewModel);
-                    if (error)
+                    if (produtoViewModel.Arquivo != null || produtoViewModel.RemoverImagem)
                     {
-                        ModelState.AddModelError("Arquivo", "Por favor, envie uma imagem.");
-                        return View("Edit", produtoViewModel);
+                        (bool error, produtoViewModel) = await _produtoService.SaveFile(produtoViewModel);
+                        if (error)
+                        {
+                            ModelState.AddModelError("Arquivo", "Por favor, envie uma imagem.");
+                            return View("Editar", produtoViewModel);
+                        }
+                        _produtoService.DeleteFile(produto.Imagem);
                     }
-
-                    await _produtoService.Update(id, new Produto
+                    Produto NovoProduto = new()
                     {
-                        Nome = produtoViewModel.Nome,
                         Descricao = produtoViewModel.Descricao,
-                        Preco = produtoViewModel.Preco,
-                        Imagem = produtoViewModel.Imagem
-                    });
-
-                    if (_produtoService.CheckIfItHasBeenChanged(produto, await _produtoService.Get(id)))
+                        Imagem = produtoViewModel.Imagem,
+                        Nome = produtoViewModel.Nome,
+                        Preco = produtoViewModel.Preco
+                    };
+                    if (_produtoService.CheckIfItHasBeenChanged(produto, NovoProduto))
                     {
-                        return RedirectToAction(nameof(Index));
+                        await _produtoService.Update(id, NovoProduto);
+
+                        return RedirectToAction(nameof(ListarProdutos));
                     }
                 }
                 catch (DbUpdateConcurrencyException)
@@ -190,10 +234,10 @@ namespace Cafeteria.Controllers
             return View(produtoViewModel);
         }
 
-        // GET: Produtos/Delete/5
-        public IActionResult Delete(int? id)
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Deletar(int? id)
         {
-            var produto = _produtoService.Get(id.GetValueOrDefault());
+            var produto = await _produtoService.Get(id.GetValueOrDefault());
 
             if (id == null || produto == null)
             {
@@ -203,8 +247,8 @@ namespace Cafeteria.Controllers
             return View(produto);
         }
 
-        // POST: Produtos/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Administrador")]
+        [HttpPost, ActionName("Deletar")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -227,45 +271,24 @@ namespace Cafeteria.Controllers
             }
 
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(ListarProdutos));
         }
 
-        // Ação de favoritar
-        [Authorize(Roles = "Cliente")]
-        public async Task<IActionResult> Favoritar(int id)
+        // ListarProdutos
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> ListarProdutos()
         {
-            try
+            var produto = await _produtoService.GetAll(null);
+            IEnumerable<ProdutoViewModel> produtos = produto.Select(p => new ProdutoViewModel
             {
-                int clienteId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
-                var produto = await _produtoService.Get(id);
-                if (produto != null)
-                {
-                    var favorito = new Favorito
-                    {
-                        ClienteId = clienteId,
-                        ProdutoId = id
-                    };
+                Id = p.Id,
+                Nome = p.Nome,
+                Descricao = p.Descricao,
+                Preco = p.Preco,
+                Imagem = p.Imagem
+            });
 
-                    var encontrado = await _produtoService.GetFavorito(favorito);
-                    if (encontrado != null)
-                    {
-                        await _produtoService.DeleteFavorite(encontrado.Id);
-                        return RedirectToAction(nameof(Index));
-                    }
-                    await _produtoService.SaveFavorite(favorito);
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception e)
-            {
-                return Problem(e.Message);
-            }
-
-            return RedirectToAction(nameof(Index));
+            return View(produtos);
         }
-
     }
 }

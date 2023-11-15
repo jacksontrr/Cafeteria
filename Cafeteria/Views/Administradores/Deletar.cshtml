@@ -1,0 +1,31 @@
+﻿@model Cafeteria.Models.Administrador
+
+@{
+    ViewData["Title"] = "Deletar";
+}
+
+<h3 class="title-center">Tem certeza de que deseja excluir?</h3>
+<hr />
+
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+    </dl>
+
+<div class="row col-md-6">
+    <form asp-action="Deletar" class="d-flex justify-content-between">
+        <input type="hidden" asp-for="Id" />
+        <a asp-action="Index" class="btn btn-light">Voltar</a>
+        <input type="submit" value="Deletar" class="btn btn-danger" />
+    </form>
+</div>

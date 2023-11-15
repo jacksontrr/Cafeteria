@@ -2,6 +2,248 @@
 // More info at https://go.microsoft.com/fwlink/?LinkId=808241
 [
   {
+    "outputFileName": "wwwroot/css/ProdutosCadastrar.min.css",
+    "inputFiles": [
+      "wwwroot/css/ProdutosCadastrar.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ProdutosCadastrar.min.js",
+    "inputFiles": [
+      "wwwroot/js/ProdutosCadastrar.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ProdutosEditar.min.css",
+    "inputFiles": [
+      "wwwroot/css/ProdutosEditar.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ProdutosEditar.min.js",
+    "inputFiles": [
+      "wwwroot/js/ProdutosEditar.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ListarProdutos.min.css",
+    "inputFiles": [
+      "wwwroot/css/ListarProdutos.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ListarProdutos.min.js",
+    "inputFiles": [
+      "wwwroot/js/ListarProdutos.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ClientesEditar.min.css",
+    "inputFiles": [
+      "wwwroot/css/ClientesEditar.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ClientesEditar.min.js",
+    "inputFiles": [
+      "wwwroot/js/ClientesEditar.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ClientesDeletar.min.css",
+    "inputFiles": [
+      "wwwroot/css/ClientesDeletar.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ClientesDeletar.min.js",
+    "inputFiles": [
+      "wwwroot/js/ClientesDeletar.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ClientesDetalhes.min.css",
+    "inputFiles": [
+      "wwwroot/css/ClientesDetalhes.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ClientesDetalhes.min.js",
+    "inputFiles": [
+      "wwwroot/js/ClientesDetalhes.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ClientesCadastrar.min.css",
+    "inputFiles": [
+      "wwwroot/css/ClientesCadastrar.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ClientesCadastrar.min.js",
+    "inputFiles": [
+      "wwwroot/js/ClientesCadastrar.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/PedidoList.min.css",
+    "inputFiles": [
+      "wwwroot/css/PedidoList.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/PedidoList.min.js",
+    "inputFiles": [
+      "wwwroot/js/PedidoList.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/Pedido.min.css",
+    "inputFiles": [
+      "wwwroot/css/Pedido.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/Pedido.min.js",
+    "inputFiles": [
+      "wwwroot/js/Pedido.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/Carrinho.min.css",
+    "inputFiles": [
+      "wwwroot/css/Carrinho.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/Carrinho.min.js",
+    "inputFiles": [
+      "wwwroot/js/Carrinho.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ProdutosDetalhes.min.css",
+    "inputFiles": [
+      "wwwroot/css/ProdutosDetalhes.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ProdutosDetalhes.min.js",
+    "inputFiles": [
+      "wwwroot/js/ProdutosDetalhes.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
     "outputFileName": "wwwroot/css/Favorito.min.css",
     "inputFiles": [
       "wwwroot/css/Favorito.css"

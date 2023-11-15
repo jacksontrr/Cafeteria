@@ -16,10 +16,12 @@ namespace Cafeteria.Controllers
     {
 
         private readonly ILoginService _loginService;
+        private readonly ICarrinhoService _cartService;
 
-        public LoginController(ILoginService loginService)
+        public LoginController(ILoginService loginService, ICarrinhoService cartService)
         {
             _loginService = loginService;
+            _cartService = cartService;
         }
 
         public IActionResult Index()
@@ -28,7 +30,7 @@ namespace Cafeteria.Controllers
 
             if (User.IsInRole("Administrador"))
             {
-                return RedirectToAction("Index", "Administradores");
+                return RedirectToAction("ListPending", "Pedidos");
             }
 
             if (User.IsInRole("Cliente"))
@@ -45,7 +47,7 @@ namespace Cafeteria.Controllers
 
             if (User.IsInRole("Administrador"))
             {
-                return RedirectToAction("Index", "Administradores");
+                return RedirectToAction("ListPending", "Pedidos");
             }
 
             if (User.IsInRole("Cliente"))
@@ -215,7 +217,7 @@ namespace Cafeteria.Controllers
                 if (administrador != null)
                 {
                     await SignInAsync(new UsuarioViewModel(administrador), true, true);
-                    return RedirectToAction("Index", "Administradores");
+                    return RedirectToAction("ListPending", "Pedidos");
                 }
 
                 ModelState.AddModelError("Email", "Email ou senha incorretos");
@@ -228,6 +230,7 @@ namespace Cafeteria.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
+            _cartService.Delete();
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Produtos");
         }
@@ -314,9 +317,10 @@ namespace Cafeteria.Controllers
                 var authenticationProperties = new AuthenticationProperties
                 {
                     IsPersistent = isPersistent,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10)
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(1)
                 };
 
+                _cartService.Delete();
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authenticationProperties);
 

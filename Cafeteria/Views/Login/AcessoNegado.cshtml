@@ -12,7 +12,7 @@
                     <h1 class="display-4 text-center">Acesso Negado</h1>
                     <p class="lead text-center">Olá @User.FindFirst(ClaimTypes.Name)?.Value, você não tem permissão para acessar esta página.</p>
                     <div class="text-center py-2">
-                        <a asp-area="" asp-controller="/" asp-action="Index" class="btn btn-brown">Voltar à Página Inicial</a>
+                        <a asp-area="" asp-controller="Login" asp-action="Index" class="btn btn-brown">Voltar à Página Inicial</a>
                     </div>
                 }
                 else

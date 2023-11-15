@@ -12,7 +12,7 @@ namespace Cafeteria.Services.Interfaces
         Task Update(int id, Produto produto);
         Task Delete(int id);
         bool Exists(int id);
-        bool SaveFile(ref ProdutoViewModel produtoViewModel);
+        Task<(bool error, ProdutoViewModel produtoViewModel)> SaveFile(ProdutoViewModel produtoViewModel);
         void DeleteFile(string? fileName);
         bool CheckIfItHasBeenChanged(Produto Antigo, Produto Novo);
         Task SaveFavorite(Favorito favorito);

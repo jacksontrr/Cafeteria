@@ -1,10 +1,7 @@
 ﻿$(document).ready(function () {
 
-    // search 
-    $("#search-send").on("click", function () {
-        let search = $("#search").val();
-        if (search != "") {
-            window.location.href = "/Produtos/Search/" + search;
-        }
-    }
-});
+    $(".card").on("click", function () {
+        let id = $(this).attr("id");
+        window.location.href = "/Produtos/Details/" + id;
+    })
+})

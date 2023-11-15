@@ -1,16 +1,16 @@
 ﻿@model Cafeteria.ViewModels.ProdutoViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Cadastrar";
 }
 
-<h1>Create</h1>
+<link rel="stylesheet" href="~/css/ProdutosCadastrar.css" asp-append-version="true" />
 
-<h4>Produto</h4>
-<hr />
+<h1 class="title-center">Cadastrar Produto</h1>
+
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <form asp-action="Cadastrar" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Nome" class="control-label"></label>
@@ -29,22 +29,23 @@
             </div>
             <div class="form-group">
                 <label asp-for="Arquivo" class="control-label"></label>
-                <input asp-for="Arquivo" type="file" class="form-control-file" />
+                <input asp-for="Arquivo" class="form-control-file" />
                 <span asp-validation-for="Arquivo" class="text-danger"></span>
-                @* <input asp-for="Imagem" class="form-control" /> *@
-                @* <span asp-validation-for="Imagem" class="text-danger"></span> *@
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-group mt-2">
+                <label asp-for="Imagem" class="control-label"></label>
+                <img src="" id="imagem" class="form-control" />
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+                <a asp-action="ListarProdutos" class="btn btn-light">Voltar</a>
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
-    
+    <script src="~/js/ProdutosCadastrar.js"></script>
 }

@@ -113,7 +113,7 @@ namespace Cafeteria.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AdministradorId")
+                    b.Property<int?>("AdministradorId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ClienteId")
@@ -121,12 +121,6 @@ namespace Cafeteria.Migrations
 
                     b.Property<DateTime?>("DataPedido")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("ProdutoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Quantidade")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Status")
                         .HasColumnType("TEXT");
@@ -137,9 +131,31 @@ namespace Cafeteria.Migrations
 
                     b.HasIndex("ClienteId");
 
+                    b.ToTable("Pedidos");
+                });
+
+            modelBuilder.Entity("Cafeteria.Models.PedidoProduto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PedidoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PedidoId");
+
                     b.HasIndex("ProdutoId");
 
-                    b.ToTable("Pedidos");
+                    b.ToTable("PedidoProdutos");
                 });
 
             modelBuilder.Entity("Cafeteria.Models.Produto", b =>
@@ -178,7 +194,7 @@ namespace Cafeteria.Migrations
                         .IsRequired();
 
                     b.HasOne("Cafeteria.Models.Produto", "Produto")
-                        .WithMany()
+                        .WithMany("Favoritos")
                         .HasForeignKey("ProdutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -203,13 +219,24 @@ namespace Cafeteria.Migrations
                 {
                     b.HasOne("Cafeteria.Models.Administrador", "Administrador")
                         .WithMany()
-                        .HasForeignKey("AdministradorId")
+                        .HasForeignKey("AdministradorId");
+
+                    b.HasOne("Cafeteria.Models.Cliente", "Cliente")
+                        .WithMany("Pedidos")
+                        .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Cafeteria.Models.Cliente", "Cliente")
-                        .WithMany()
-                        .HasForeignKey("ClienteId")
+                    b.Navigation("Administrador");
+
+                    b.Navigation("Cliente");
+                });
+
+            modelBuilder.Entity("Cafeteria.Models.PedidoProduto", b =>
+                {
+                    b.HasOne("Cafeteria.Models.Pedido", "Pedido")
+                        .WithMany("PedidoProdutos")
+                        .HasForeignKey("PedidoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -219,11 +246,24 @@ namespace Cafeteria.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Administrador");
-
-                    b.Navigation("Cliente");
+                    b.Navigation("Pedido");
 
                     b.Navigation("Produto");
+                });
+
+            modelBuilder.Entity("Cafeteria.Models.Cliente", b =>
+                {
+                    b.Navigation("Pedidos");
+                });
+
+            modelBuilder.Entity("Cafeteria.Models.Pedido", b =>
+                {
+                    b.Navigation("PedidoProdutos");
+                });
+
+            modelBuilder.Entity("Cafeteria.Models.Produto", b =>
+                {
+                    b.Navigation("Favoritos");
                 });
 #pragma warning restore 612, 618
         }

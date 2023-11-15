@@ -82,8 +82,15 @@ namespace Cafeteria.Services.Implementations
 
         public async Task<Produto> Get(int id)
         {
-
-            return await _context.Produtos.FirstOrDefaultAsync(x => x.Id == id);
+            Produto produto = await _context.Produtos.Include(x => x.Favoritos).FirstOrDefaultAsync(x => x.Id == id);
+            if (produto != null)
+            {
+                if (String.IsNullOrEmpty(produto.Imagem))
+                {
+                    produto.Imagem = "sem-imagem.png";
+                }
+            }
+            return produto;
         }
 
         #endregion
@@ -91,7 +98,11 @@ namespace Cafeteria.Services.Implementations
         public async Task<IEnumerable<Produto>> GetNome(string nome)
         {
             List<Produto> list = new List<Produto>();
-            foreach (var produto in await _context.Produtos.ToListAsync())
+            var products = await _context.Produtos
+                                        .Include(p => p.Favoritos)
+                                        .Distinct() // Isso garante que os produtos não estejam duplicados
+                                        .ToListAsync();
+            foreach (var produto in products)
             {
                 string nomeBD = produto.Nome;
                 nomeBD = CharacterTreatment.RemoveDiacritics(nomeBD);

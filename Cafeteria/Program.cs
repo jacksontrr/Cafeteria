@@ -11,21 +11,28 @@ using Cafeteria.Services.Interfaces;
 using Cafeteria.Services.Implementations;
 using Cafeteria.Data.Repositories;
 using Cafeteria.Data.Implementations;
+using Cafeteria.Utilities;
+using Microsoft.AspNetCore.WebSockets;
+using System.Net.WebSockets;
+using System.Text;
+
+//List<WebSocket> _sockets = new List<WebSocket>();
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddMvc();
-
 builder.Services.AddDbContext<CafeteriaContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("CafeteriaContext")));
 builder.Services.AddSingleton<IFileProvider>(
     new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
-#region Services
+#region Repositories
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IAdministradorRepository, AdministradorRepository>();
 builder.Services.AddScoped<IFavoritoRepository, FavoritoRepository>();
+builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
+builder.Services.AddScoped<IFormaPagamentoRepository, FormaPagamentoRepository>();
 #endregion
 
 #region Services
@@ -33,6 +40,12 @@ builder.Services.AddScoped<IAdministradorService, AdministradorService>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddSingleton<ICarrinhoService, CarrinhoService>();
+builder.Services.AddScoped<IPedidoService, PedidoService>();
+builder.Services.AddScoped<IFormaPagamentoService, FormaPagamentoService>();
+#endregion
+
+#region Utilities
 #endregion
 
 builder.Services.AddHsts(options =>
@@ -72,12 +85,52 @@ app.UseDeveloperExceptionPage();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware<LastRequestMiddleware>();
+
+app.UseWebSockets();
+app.UseMiddleware<Cafeteria.Utilities.WebSocketMiddleware>();
+
+//app.Use(async (context, next) =>
+//{
+//    if (context.Request.Path == "/ws")
+//    {
+//        if (context.WebSockets.IsWebSocketRequest)
+//        {
+//            WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+//            _sockets.Add(webSocket);
+
+//            var buffer = new byte[1024 * 4];
+//            WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+//            while (!result.CloseStatus.HasValue)
+//            {
+//                foreach (var socket in _sockets)
+//                {
+//                    if (socket.State == WebSocketState.Open)
+//                    {
+//                        await socket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
+//                    }
+//                }
+
+//                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+//            }
+//            await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
+//            _sockets.Remove(webSocket);
+//        }
+//        else
+//        {
+//            context.Response.StatusCode = 400;
+//        }
+//    }
+//    else
+//    {
+//        await next();
+//    }
+
+//});
 
 //app.MapDefaultControllerRoute();
 

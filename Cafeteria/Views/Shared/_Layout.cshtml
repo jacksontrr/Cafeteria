@@ -1,4 +1,10 @@
 ﻿@using System.Security.Claims;
+@{
+    var routeController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var routeAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var showForm = (routeController == "Produtos" && routeAction == "Index");
+    var cartQuantity = ViewData["CartQuantity"];
+}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -15,24 +21,15 @@
     <header>
         <nav class="navbar navbar-expand-sm  border-bottom box-shadow mb-3 navbar-brown d-none d-md-block">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="/" asp-action="">Cafeteria</a>
+                @if (User.IsInRole("Administrador"))
+                {
+                    <a class="navbar-brand" asp-controller="Pedidos" asp-action="ListPending">Cafeteria</a>
+                }
+                else
+                {
+                    <a class="navbar-brand" asp-area="" asp-controller="/" asp-action="">Cafeteria</a>
+                }
 
-                @* <div class="flex-grow-1 d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                <li class="nav-item">
-                <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Index">Login</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Cadastrar">Login</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link text-white" asp-area="" asp-controller="Produtos" asp-action="Index">Produtos</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                </li>
-                </ul>
-                </div> *@
                 <div class="d-flex">
                     <ul class="navbar-nav ml-auto">
                         @if (User.Identity.IsAuthenticated)
@@ -51,9 +48,30 @@
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     @if (User.IsInRole("Cliente"))
                                     {
+                                        <a asp-action="Index" asp-controller="Carrinho" class="dropdown-item position-relative">
+                                            @if (cartQuantity != null)
+                                            {
+                                                if ((int)cartQuantity != 0)
+                                                {
+                                                    <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
+                                                        @cartQuantity
+                                                    </span>
+                                                }
+                                            }
+                                            Carrinho
+                                        </a>
                                         <a asp-action="Favoritos" asp-controller="Clientes" class="dropdown-item">Favoritos</a>
+                                        <a asp-action="Index" asp-controller="Pedidos" class="dropdown-item">Pedidos</a>
                                     }
-                                    <a asp-action="Configuracao" asp-controller="Login" class="dropdown-item" >Configurações</a>
+                                    @if (User.IsInRole("Administrador"))
+                                    {
+                                        <a asp-action="Cadastrar" asp-controller="Produtos" class="dropdown-item"> Cadastrar Produtos </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a asp-action="ListarProdutos" asp-controller="Produtos" class="dropdown-item"> Listar Produtos </a>
+                                        <a asp-action="Index" asp-controller="Administradores" class="dropdown-item"> Listar Administradores </a>
+                                        <a asp-action="ListarClientes" asp-controller="Clientes" class="dropdown-item"> Listar Clientes </a>
+                                    }
+                                    <a asp-action="Configuracao" asp-controller="Login" class="dropdown-item">Configurações</a>
                                     <div class="dropdown-divider"></div>
                                     <a asp-action="Logout" asp-controller="Login" class="dropdown-item">Sair</a>
                                 </div>
@@ -71,22 +89,34 @@
             </div>
         </nav>
 
-
-        <form asp-controller="Produtos" asp-action="Search" method="get">
-            <div class="container-fluid search-bar d-md-none d-flex">
-                <div class="search shadow-white mx-4">
-                    <div class="input-group">
-                        <input type="text" class="search-input form-control" placeholder="Pesquisar" aria-label="Pesquisar" name="search" aria-describedby="button-addon2" value="@(ViewBag.CurrentFilter ?? "")">
-                        <div class="search-finishing">
-                            <button class="search-button btn btn-padding btn-rounded" type="submit" id="search-send-navbar"><i class="fas fa-search"></i></button>
+        @if (showForm)
+        {
+            <form asp-controller="Produtos" asp-action="Search" method="get">
+                <div class="container-fluid search-bar d-md-none d-flex">
+                    <div class="search shadow-white mx-4">
+                        <div class="input-group">
+                            <input type="text" class="search-input form-control" placeholder="Pesquisar" aria-label="Pesquisar" name="search" aria-describedby="button-addon2" value="@(ViewBag.CurrentFilter ?? "")">
+                            <div class="search-finishing">
+                                <button class="search-button btn btn-padding btn-rounded" type="submit" id="search-send-navbar"><i class="fas fa-search"></i></button>
+                            </div>
                         </div>
                     </div>
+                    <a class="btn btn-outline-light btn-rounded btn-padding shadow-white position-relative" asp-action="Index" asp-controller="Carrinho">
+                        @if (cartQuantity != null)
+                        {
+                            if ((int)cartQuantity != 0)
+                            {
+                                <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
+                                    @cartQuantity
+                                </span>
+                            }
+                        }
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
                 </div>
-                <a class="btn btn-outline-light btn-rounded btn-padding shadow-white">
-                    <i class="fas fa-shopping-cart"></i>
-                </a>
-            </div>
-        </form>
+            </form>
+        }
+
         @* <a class="navbar-brand">Navbar</a>
         <form class="form-inline">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -94,22 +124,40 @@
         </form> *@
 
     </header>
+    <a id="backButton" class="btn btn-outline-light btn-circle mb-3 ms-3 mt-3 bg-brown btn-brown btn-back d-md-none d-flex" style="display:none !important;">
+        <i class="fas fa-arrow-left"></i>
+    </a>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-3 mt-3">
             @RenderBody()
         </main>
     </div>
     <nav class="navbar fixed-bottom navbar-light bg-brown border-bottom box-shadow navbar-brown d-md-none d-block">
         <div class="container-fluid justify-content-around">
+            @if (User.IsInRole("Administrador"))
+            {
+                <a class="navbar-white" asp-area="" asp-controller="Pedidos" asp-action="ListPending"><i class="fas fa-home"></i></a>
+            }
+            else
+            {
+                <a class="navbar-white" asp-area="" asp-controller="/" asp-action="Index"><i class="fas fa-home"></i></a>
+            }
 
-            <a class="navbar-white" asp-area="" asp-controller="/" asp-action="Index"><i class="fas fa-home"></i></a>
 
+            @if (User.IsInRole("Cliente"))
+            {
+                <a class="navbar-white" asp-controller="Clientes" asp-action="Favoritos"><i class="fas fa-heart"></i></a>
 
-            <a class="navbar-white" asp-area="" asp-controller="Favoritos" asp-action="Index"><i class="fas fa-heart"></i></a>
+                <a class="navbar-white" asp-area="" asp-controller="Pedidos" asp-action="Index"><i class="fas fa-receipt"></i></a>
 
-            <a class="navbar-white" asp-area="" asp-controller="Carrinhos" asp-action="Index"><i class="fas fa-receipt"></i></a>
+                <a class="navbar-white" asp-area="" asp-controller="Notificacoes" asp-action="Index"><i class="fas fa-bell"></i></a>
+            }
 
-            <a class="navbar-white" asp-area="" asp-controller="Notificacoes" asp-action="Index"><i class="fas fa-bell"></i></a>
+            @if (User.IsInRole("Administrador"))
+            {
+                <a class="navbar-white" asp-area="" asp-controller="Produtos" asp-action="Cadastrar"><i class="fas fa-pencil"></i></a>
+                <a class="navbar-white" asp-area="" asp-controller="Administradores" asp-action="Cadastrar"><i class="fas fa-user-plus"></i></a>
+            }
 
             @* <a class="navbar-brand" asp-area="" asp-controller="Carrinho" asp-action="Index"><i class="fas fa-shopping-basket"></i></a> *@
             @if (User.Identity.IsAuthenticated)
@@ -119,10 +167,12 @@
                         <i class="fas fa-user"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-top dropdown" aria-labelledby="navbarDownDropdown">
-                        <a class="dropdown-item" href="#">Perfil</a>
-                        @if (User.IsInRole("Cliente"))
+                        @if (User.IsInRole("Administrador"))
                         {
-                            <a asp-action="Favoritos" asp-controller="Clientes" class="dropdown-item">Favoritos</a>
+
+                            <a asp-action="ListarProdutos" asp-controller="Produtos" class="dropdown-item"> Listar Produtos </a>
+                            <a asp-action="Index" asp-controller="Administradores" class="dropdown-item"> Listar Administradores </a>
+                            <a asp-action="ListarClientes" asp-controller="Clientes" class="dropdown-item"> Listar Clientes </a>
                         }
                         <a asp-action="Configuracao" asp-controller="Login" class="dropdown-item">Configurações</a>
                         <div class="dropdown-divider"></div>
@@ -160,6 +210,25 @@
             </div> *@
         </div>
     </nav>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
