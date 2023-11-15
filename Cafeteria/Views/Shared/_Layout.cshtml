@@ -66,6 +66,8 @@
                                     @if (User.IsInRole("Administrador"))
                                     {
                                         <a asp-action="Cadastrar" asp-controller="Produtos" class="dropdown-item"> Cadastrar Produtos </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a asp-action="ListarProdutos" asp-controller="Produtos" class="dropdown-item"> Listar Produtos </a>
                                         <a asp-action="Index" asp-controller="Administradores" class="dropdown-item"> Listar Administradores </a>
                                         <a asp-action="ListarClientes" asp-controller="Clientes" class="dropdown-item"> Listar Clientes </a>
                                     }
@@ -168,6 +170,7 @@
                         @if (User.IsInRole("Administrador"))
                         {
 
+                            <a asp-action="ListarProdutos" asp-controller="Produtos" class="dropdown-item"> Listar Produtos </a>
                             <a asp-action="Index" asp-controller="Administradores" class="dropdown-item"> Listar Administradores </a>
                             <a asp-action="ListarClientes" asp-controller="Clientes" class="dropdown-item"> Listar Clientes </a>
                         }
