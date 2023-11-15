@@ -78,154 +78,6 @@ namespace Cafeteria.Controllers
             return View(produto);
         }
 
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProdutoViewModel produtoViewModel)
-        {
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    bool error = _produtoService.SaveFile(ref produtoViewModel);
-                    if (error)
-                    {
-                        ModelState.AddModelError("Arquivo", "Por favor, envie uma imagem.");
-                        return View("Create", produtoViewModel);
-                    }
-                    Produto produto = new Produto
-                    {
-                        Nome = produtoViewModel.Nome,
-                        Descricao = produtoViewModel.Descricao,
-                        Preco = produtoViewModel.Preco,
-                        Imagem = produtoViewModel.Imagem
-                    };
-                    await _produtoService.Add(produto);
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("Arquivo", e.Message);
-                    return View("Create", produtoViewModel);
-                }
-            }
-            return View(produtoViewModel);
-        }
-
-        public async Task<IActionResult> Edit(int? id)
-        {
-            var produto = await _produtoService.Get(id.GetValueOrDefault());
-
-            if (id == null || produto == null)
-            {
-                return NotFound();
-            }
-
-            ProdutoViewModel produtoViewModel = new ProdutoViewModel
-            {
-                Id = produto.Id,
-                Nome = produto.Nome,
-                Descricao = produto.Descricao,
-                Preco = produto.Preco,
-                Imagem = produto.Imagem
-            };
-
-            return View(produtoViewModel);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ProdutoViewModel produtoViewModel)
-        {
-            Produto produto = await _produtoService.Get(id);
-
-            if (id != produtoViewModel.Id || produto == null)
-            {
-                return NotFound();
-            }
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _produtoService.DeleteFile(produto.Imagem);
-                    bool error = _produtoService.SaveFile(ref produtoViewModel);
-                    if (error)
-                    {
-                        ModelState.AddModelError("Arquivo", "Por favor, envie uma imagem.");
-                        return View("Edit", produtoViewModel);
-                    }
-
-                    await _produtoService.Update(id, new Produto
-                    {
-                        Nome = produtoViewModel.Nome,
-                        Descricao = produtoViewModel.Descricao,
-                        Preco = produtoViewModel.Preco,
-                        Imagem = produtoViewModel.Imagem
-                    });
-
-                    if (_produtoService.CheckIfItHasBeenChanged(produto, await _produtoService.Get(id)))
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_produtoService.Exists(produtoViewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
-            return View(produtoViewModel);
-        }
-
-        public async Task<IActionResult> Delete(int? id)
-        {
-            var produto = await _produtoService.Get(id.GetValueOrDefault());
-
-            if (id == null || produto == null)
-            {
-                return NotFound();
-            }
-
-            return View(produto);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            try
-            {
-                var produto = await _produtoService.Get(id);
-
-                if (produto != null)
-                {
-                    await _produtoService.Delete(id);
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception e)
-            {
-                return Problem(e.Message);
-            }
-
-
-            return RedirectToAction(nameof(Index));
-        }
-
         [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> Favoritar(int id)
         {
@@ -265,5 +117,178 @@ namespace Cafeteria.Controllers
             return Redirect(url);
         }
 
+        [Authorize(Roles = "Administrador")]
+        public IActionResult Cadastrar()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Administrador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Cadastrar(ProdutoViewModel produtoViewModel)
+        {
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    (bool error, produtoViewModel) = await _produtoService.SaveFile(produtoViewModel);
+                    if (error)
+                    {
+                        ModelState.AddModelError("Arquivo", "Por favor, envie uma imagem.");
+                        return View("Cadastrar", produtoViewModel);
+                    }
+                    Produto produto = new Produto
+                    {
+                        Nome = produtoViewModel.Nome,
+                        Descricao = produtoViewModel.Descricao,
+                        Preco = produtoViewModel.Preco,
+                        Imagem = produtoViewModel.Imagem
+                    };
+                    await _produtoService.Add(produto);
+                    return RedirectToAction(nameof(ListarProdutos));
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("Arquivo", e.Message);
+                    return View("Cadastrar", produtoViewModel);
+                }
+            }
+            return View(produtoViewModel);
+        }
+
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Editar(int? id)
+        {
+            var produto = await _produtoService.Get(id.GetValueOrDefault());
+
+            if (id == null || produto == null)
+            {
+                return NotFound();
+            }
+
+            ProdutoViewModel produtoViewModel = new ProdutoViewModel
+            {
+                Id = produto.Id,
+                Nome = produto.Nome,
+                Descricao = produto.Descricao,
+                Preco = produto.Preco,
+                Imagem = produto.Imagem
+            };
+
+            return View(produtoViewModel);
+        }
+
+        [Authorize(Roles = "Administrador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(int id, ProdutoViewModel produtoViewModel)
+        {
+            Produto produto = await _produtoService.Get(id);
+
+            if (id != produtoViewModel.Id || produto == null)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (produtoViewModel.Arquivo != null || produtoViewModel.RemoverImagem)
+                    {
+                        (bool error, produtoViewModel) = await _produtoService.SaveFile(produtoViewModel);
+                        if (error)
+                        {
+                            ModelState.AddModelError("Arquivo", "Por favor, envie uma imagem.");
+                            return View("Editar", produtoViewModel);
+                        }
+                        _produtoService.DeleteFile(produto.Imagem);
+                    }
+                    Produto NovoProduto = new()
+                    {
+                        Descricao = produtoViewModel.Descricao,
+                        Imagem = produtoViewModel.Imagem,
+                        Nome = produtoViewModel.Nome,
+                        Preco = produtoViewModel.Preco
+                    };
+                    if (_produtoService.CheckIfItHasBeenChanged(produto, NovoProduto))
+                    {
+                        await _produtoService.Update(id, NovoProduto);
+
+                        return RedirectToAction(nameof(ListarProdutos));
+                    }
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_produtoService.Exists(produtoViewModel.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return View(produtoViewModel);
+        }
+
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Deletar(int? id)
+        {
+            var produto = await _produtoService.Get(id.GetValueOrDefault());
+
+            if (id == null || produto == null)
+            {
+                return NotFound();
+            }
+
+            return View(produto);
+        }
+
+        [Authorize(Roles = "Administrador")]
+        [HttpPost, ActionName("Deletar")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                var produto = await _produtoService.Get(id);
+
+                if (produto != null)
+                {
+                    await _produtoService.Delete(id);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception e)
+            {
+                return Problem(e.Message);
+            }
+
+
+            return RedirectToAction(nameof(ListarProdutos));
+        }
+
+        // ListarProdutos
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> ListarProdutos()
+        {
+            var produto = await _produtoService.GetAll(null);
+            IEnumerable<ProdutoViewModel> produtos = produto.Select(p => new ProdutoViewModel
+            {
+                Id = p.Id,
+                Nome = p.Nome,
+                Descricao = p.Descricao,
+                Preco = p.Preco,
+                Imagem = p.Imagem
+            });
+
+            return View(produtos);
+        }
     }
 }
