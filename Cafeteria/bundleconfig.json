@@ -2,6 +2,72 @@
 // More info at https://go.microsoft.com/fwlink/?LinkId=808241
 [
   {
+    "outputFileName": "wwwroot/css/ProdutosCadastrar.min.css",
+    "inputFiles": [
+      "wwwroot/css/ProdutosCadastrar.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ProdutosCadastrar.min.js",
+    "inputFiles": [
+      "wwwroot/js/ProdutosCadastrar.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ProdutosEditar.min.css",
+    "inputFiles": [
+      "wwwroot/css/ProdutosEditar.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ProdutosEditar.min.js",
+    "inputFiles": [
+      "wwwroot/js/ProdutosEditar.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/ListarProdutos.min.css",
+    "inputFiles": [
+      "wwwroot/css/ListarProdutos.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/ListarProdutos.min.js",
+    "inputFiles": [
+      "wwwroot/js/ListarProdutos.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
     "outputFileName": "wwwroot/css/ClientesEditar.min.css",
     "inputFiles": [
       "wwwroot/css/ClientesEditar.css"
