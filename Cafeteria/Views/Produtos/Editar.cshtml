@@ -1,18 +1,19 @@
 ﻿@model Cafeteria.ViewModels.ProdutoViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar";
 }
 
-<h1>Edit</h1>
+<link rel="stylesheet" href="~/css/ProdutosEditar.css" asp-append-version="true" />
 
-<h4>Produto</h4>
-<hr />
+<h1 class="title-center">Editar - @Model.Nome</h1>
+
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit" enctype="multipart/form-data">
+        <form asp-action="Editar" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Imagem" />
             <div class="form-group">
                 <label asp-for="Nome" class="control-label"></label>
                 <input asp-for="Nome" class="form-control" />
@@ -28,27 +29,26 @@
                 <input asp-for="Preco" class="form-control" />
                 <span asp-validation-for="Preco" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Arquivo" class="control-label"></label>
+            <div class="form-group mt-2">
                 <input asp-for="Arquivo" type="file" class="form-control-file" />
                 <span asp-validation-for="Arquivo" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-2">
                 <label asp-for="Imagem" class="control-label"></label>
-                <img src="~/images/product/@Model.Imagem" class="form-control" />
-                <span asp-validation-for="Arquivo" class="text-danger"></span>
+                <img src="~/images/product/@Model.Imagem" id="imagem" class="form-control" />
+                <span class="d-flex align-items-center gap-1">
+                    <input type="checkbox" asp-for="RemoverImagem" /> Deletar Imagem
+                </span>
             </div>
-            <div class="form-group">
+            <div class="d-flex justify-content-between mt-2">
+                <a asp-action="ListarProdutos" class="btn btn-light">Voltar</a>
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
-    <script src="~/js/Produtos.js"></script>
+    <script src="~/js/ProdutosEditar.js"></script>
 }

@@ -1,0 +1,46 @@
+﻿@model Cafeteria.Models.Produto
+
+@{
+    ViewData["Title"] = "Deletar";
+}
+
+
+
+<h3 class="title-center">Tem certeza de que deseja excluir isto?</h3>
+<hr />
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Descricao)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Descricao)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Preco)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Preco)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Imagem)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="~/images/product/@Html.DisplayFor(model => model.Imagem)" style="height: auto;width: 100px;" />
+        </dd>
+    </dl>
+
+    <form asp-action="Deletar">
+        <input type="hidden" asp-for="Id" />
+        <div class="d-flex justify-content-between">
+            <a asp-action="ListarProdutos" class="btn btn-light">Voltar</a>
+            <input type="submit" value="Deletar" class="btn btn-danger" />
+        </div>
+    </form>
+</div>
