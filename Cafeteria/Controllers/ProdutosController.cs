@@ -38,10 +38,16 @@ namespace Cafeteria.Controllers
             {
                 clienteId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
             }
-            var produtos = await _produtoService.GetAll(clienteId);
-            return produtos != null ?
-                        View(produtos) :
-                        Problem("Entity set 'CafeteriaContext.Produtos'  is null.");
+            try
+            {
+                var produtos = await _produtoService.GetAll(clienteId);
+                return View(produtos);
+
+            }
+            catch (Exception e)
+            {
+                return Problem(e.Message);
+            }
         }
 
         public async Task<IActionResult> Search(string search)
