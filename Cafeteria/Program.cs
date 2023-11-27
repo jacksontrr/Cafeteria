@@ -15,10 +15,15 @@ using Cafeteria.Utilities;
 using Microsoft.AspNetCore.WebSockets;
 using System.Net.WebSockets;
 using System.Text;
+using System.Globalization;
 
 //List<WebSocket> _sockets = new List<WebSocket>();
 
 var builder = WebApplication.CreateBuilder(args);
+var cultureInfo = new CultureInfo("pt-BR");
+
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
