@@ -26,6 +26,7 @@ builder.Services.AddMvc();
 builder.Services.AddDbContext<CafeteriaContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("CafeteriaContext")));
 builder.Services.AddSingleton<IFileProvider>(
     new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
+
 #region Repositories
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();

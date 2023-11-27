@@ -5,7 +5,7 @@ on:
     - Jackson
   pull_request:
     branches: 
-    [ "master" ]
+    - master
 env:
   AZURE_WEBAPP_NAME: experiment-project
   AZURE_WEBAPP_PACKAGE_PATH: ./published
@@ -47,5 +47,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.experiment_project_60DA }}
+        publish-profile: ${{ secrets.experiment_project_47E0 }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
