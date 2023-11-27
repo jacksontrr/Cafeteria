@@ -58,6 +58,7 @@ TestResults/
 ehthumbs.db
 Icon?
 Thumbs.db
+*.db
 [Bb]in
 [Oo]bj
 [Tt]est[Rr]esults
@@ -76,3 +77,5 @@ _[Ss]cripts
 .vs
 Cafeteria/Properties/PublishProfiles
 Cafeteria/Properties/ServiceDependencies
+Cafeteria/wwwroot/images/product/
+!Cafeteria/wwwroot/images/product/sem-imagem.png

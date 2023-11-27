@@ -167,6 +167,8 @@ namespace Cafeteria.Migrations
                 name: "IX_Pedidos_ProdutoId",
                 table: "Pedidos",
                 column: "ProdutoId");
+
+            migrationBuilder.Sql($"INSERT INTO Administradores (Nome, Email, Senha) VALUES ('Administrador', 'admin@gmail.com', '{Utilities.PasswordUtilities.PasswordHash("123123")}')");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
