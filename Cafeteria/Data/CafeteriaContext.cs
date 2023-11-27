@@ -9,6 +9,7 @@ namespace Cafeteria.Data
         public CafeteriaContext(DbContextOptions<CafeteriaContext> options)
             : base(options)
         {
+            ApplyMigrations(this);
         }
 
         public DbSet<Produto> Produtos { get; set; }
@@ -18,6 +19,13 @@ namespace Cafeteria.Data
         public DbSet<Favorito> Favoritos { get; set; }
         public DbSet<Pagamento> Pagamentos { get; set; }
         public DbSet<PedidoProduto> PedidoProdutos { get; set; }
-        
+
+        private void ApplyMigrations(CafeteriaContext context)
+        {
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                context.Database.Migrate();
+            }
+        }
     }
 }
