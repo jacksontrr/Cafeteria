@@ -32,6 +32,40 @@ builder.Services.AddDbContext<CafeteriaContext>(options => options.UseSqlite(bui
 builder.Services.AddSingleton<IFileProvider>(
     new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
 
+#region Create User Admin
+var userAdmin = builder.Configuration["UserAdmin"];
+var emailAdmin = builder.Configuration["EmailAdmin"];
+var passwordAdmin = builder.Configuration["PasswordAdmin"];
+
+if (!string.IsNullOrEmpty(userAdmin) && !string.IsNullOrEmpty(emailAdmin) && !string.IsNullOrEmpty(passwordAdmin))
+{
+    var connectionString = builder.Configuration.GetConnectionString("CafeteriaContext");
+
+    if (!string.IsNullOrEmpty(connectionString))
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<CafeteriaContext>();
+        optionsBuilder.UseSqlite(connectionString);
+
+        using var context = new CafeteriaContext(optionsBuilder.Options);
+
+        var existingAdmin = context.Administradores.FirstOrDefault(a => a.Email == emailAdmin);
+        var existingClient = context.Clientes.FirstOrDefault(c => c.Email == emailAdmin);
+        passwordAdmin = PasswordUtilities.PasswordHash(passwordAdmin);
+        if (existingAdmin == null && existingClient == null)
+        {
+            context.Administradores.Add(new Administrador
+            {
+                Nome = userAdmin,
+                Email = emailAdmin,
+                Senha = passwordAdmin
+            });
+
+            context.SaveChanges(); // Salva as alterações no banco de dados
+        }
+    }
+}
+#endregion
+
 #region Repositories
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
